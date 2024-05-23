@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.moida.R
 
 @Composable
-fun Title(title: String, rightBtn: String, rightColor: Color) {
+fun Title(title: String, rightBtn: String, rightColor: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,12 +34,12 @@ fun Title(title: String, rightBtn: String, rightColor: Color) {
         )
         Text(
             text = title,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Text(
             text = rightBtn,
             fontWeight = FontWeight.Bold,
-            color = rightColor
+            color = Color(rightColor)
         )
     }
 }
