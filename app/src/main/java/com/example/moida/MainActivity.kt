@@ -23,8 +23,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CreateMySchedule()
+                    //CreateMySchedule()
                     //CustomCalendar()
+                    JoinMemberShip()
                 }
             }
         }
