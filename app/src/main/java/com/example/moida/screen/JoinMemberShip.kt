@@ -51,7 +51,7 @@ fun JoinMemberShip() {
         ) {
             IconButton(onClick = { /* 전 화면으로 돌아가기 */ }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.chevron_left), // Replace with your drawable resource
+                    painter = painterResource(id = R.drawable.chevron_left),
                     contentDescription = "Back"
                 )
             }
@@ -98,7 +98,7 @@ fun JoinMemberShip() {
                         .onFocusChanged { isIdFocused = it.isFocused },
                     textStyle = TextStyle(
                         fontFamily = Pretendard,
-                        fontSize = 18.sp // Increase the font size here
+                        fontSize = 18.sp
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done
@@ -139,7 +139,7 @@ fun JoinMemberShip() {
                         .onFocusChanged { isPasswordFocused = it.isFocused },
                     textStyle = TextStyle(
                         fontFamily = Pretendard,
-                        fontSize = 18.sp // Increase the font size here
+                        fontSize = 18.sp
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done,
@@ -191,7 +191,7 @@ fun JoinMemberShip() {
                         .onFocusChanged { isNameFocused = it.isFocused },
                     textStyle = TextStyle(
                         fontFamily = Pretendard,
-                        fontSize = 18.sp // Increase the font size here
+                        fontSize = 18.sp
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done
@@ -223,7 +223,7 @@ fun JoinMemberShip() {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = { /* Handle registration */ },
+            onClick = { /* 회원가입 완료하기 클릭 */ },
             enabled = id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
