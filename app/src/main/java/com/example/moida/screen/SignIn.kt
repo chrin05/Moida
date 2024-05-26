@@ -31,17 +31,15 @@ import androidx.compose.ui.unit.sp
 import com.example.moida.R
 import com.example.moida.screen.AuthUtils
 import com.example.moida.screen.AuthUtils.errorMessages
-import com.example.moida.screen.AuthUtils.getErrorMessage
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun JoinMemberShip() {
+fun SignIn() {
     var id by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
@@ -52,6 +50,7 @@ fun JoinMemberShip() {
     val context = LocalContext.current
     val auth = remember { FirebaseAuth.getInstance() }
     val errorMessage = AuthUtils.errorMessage
+    var userName by remember { mutableStateOf<String?>(null) }
     val db = Firebase.firestore
 
     Column(
@@ -70,7 +69,7 @@ fun JoinMemberShip() {
                 )
             }
             Text(
-                text = "회원가입",
+                text = "로그인",
                 fontFamily = Pretendard,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
@@ -91,7 +90,7 @@ fun JoinMemberShip() {
                 .padding(20.dp, 30.dp, 16.dp, 16.dp)
         ) {
             Text(
-                text = "로그인 정보를 입력해주세요",
+                text = "로그인을 진행합니다.",
                 fontFamily = Pretendard,
                 fontSize = 25.sp,
                 textAlign = TextAlign.Center,
@@ -183,55 +182,6 @@ fun JoinMemberShip() {
                 )
             }
 
-            Text(
-                text = "이름을 입력해주세요",
-                fontFamily = Pretendard,
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 24.dp)
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                BasicTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp, 16.dp, 8.dp, 8.dp)
-                        .onFocusChanged { isNameFocused = it.isFocused },
-                    textStyle = TextStyle(
-                        fontFamily = Pretendard,
-                        fontSize = 18.sp
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
-                    ),
-                )
-                if (name.isEmpty() && !isNameFocused) {
-                    Text(
-                        text = "이름 입력",
-                        color = colorResource(id = R.color.gray_200),
-                        fontFamily = Pretendard,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(vertical = 12.dp)
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colorResource(id = R.color.gray_200))
-                        .align(Alignment.BottomCenter)
-                )
-            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -252,24 +202,24 @@ fun JoinMemberShip() {
 
         Button(
             onClick = {
-                if (id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
-                    auth.createUserWithEmailAndPassword(id, password)
+                if (id.isNotEmpty() && password.isNotEmpty()) {
+                    auth.signInWithEmailAndPassword(id, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 val user = auth.currentUser
-                                val userId = user?.uid
-                                val userData = hashMapOf(
-                                    "name" to name,
-                                    "email" to id
-                                )
-                                if (userId != null) {
-                                    db.collection("users").document(userId).set(userData)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(context, "회원가입 성공", Toast.LENGTH_SHORT).show()
-                                            errorMessage.value = null
+                                if (user != null) {
+                                    db.collection("users").document(user.uid).get()
+                                        .addOnSuccessListener { document ->
+                                            if (document != null) {
+                                                userName = document.getString("name")
+                                                Toast.makeText(context, "로그인 성공, ${userName}", Toast.LENGTH_SHORT).show()
+                                                errorMessage.value = null
+                                            } else {
+                                                errorMessage.value = "사용자 정보를 가져올 수 없습니다."
+                                            }
                                         }
                                         .addOnFailureListener { e ->
-                                            errorMessage.value = "회원가입 성공, 하지만 Firestore에 저장 실패: ${e.message}"
+                                            errorMessage.value = "사용자 정보를 가져오는 데 실패했습니다: ${e.message}"
                                         }
                                 }
                             } else {
@@ -280,9 +230,9 @@ fun JoinMemberShip() {
                     errorMessage.value = "모든 필드를 입력해주세요"
                 }
             },
-            enabled = id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty(),
+            enabled = id.isNotEmpty() && password.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
+                containerColor = if (id.isNotEmpty() && password.isNotEmpty()) {
                     colorResource(id = R.color.main_blue)
                 } else colorResource(id = R.color.gray_200)
             ),
@@ -292,7 +242,7 @@ fun JoinMemberShip() {
             shape = MaterialTheme.shapes.small
         ) {
             Text(
-                text = "회원가입 완료하기",
+                text = "로그인하기",
                 color = Color.White,
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Normal,
@@ -305,8 +255,8 @@ fun JoinMemberShip() {
 
 @Preview(showBackground = true)
 @Composable
-fun RegistrationScreenPreview() {
+fun RegistrationScreenPreview2() {
     MoidaTheme {
-        JoinMemberShip()
+        SignIn()
     }
 }

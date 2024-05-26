@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.moida.screen.CreateMySchedule
 import com.example.moida.ui.theme.MoidaTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             MoidaTheme {
                 // A surface container using the 'background' color from the theme
@@ -25,7 +27,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     //CreateMySchedule()
                     //CustomCalendar()
-                    JoinMemberShip()
+                    //JoinMemberShip()
+                    SignIn()
                 }
             }
         }
