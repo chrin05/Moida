@@ -58,7 +58,7 @@ fun CustomCalendar() {
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 25.dp, vertical = 20.dp)
+            .padding(vertical = 20.dp)
     ) {
         val state = rememberCalendarState(
             startMonth = startMonth,
