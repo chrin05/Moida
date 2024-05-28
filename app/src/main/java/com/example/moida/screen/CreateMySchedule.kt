@@ -9,5 +9,6 @@ import com.example.moida.component.Title
 fun CreateMySchedule() {
     Column {
         Title(title = "개인 일정 추가", rightBtn = "추가", rightColor = R.color.main_blue)
+        Title(title = "개인 일정 추가", rightBtn = "    ", rightColor = null)
     }
 }
