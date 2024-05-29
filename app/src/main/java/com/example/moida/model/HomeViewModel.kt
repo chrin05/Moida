@@ -24,9 +24,6 @@ class TodayViewModel() : ViewModel() {
             )
         )
     }
-    fun getItemCount(): Int {
-        return itemList.size
-    }
 }
 
 class UpcomingViewModel() : ViewModel() {

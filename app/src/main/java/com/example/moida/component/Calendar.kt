@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moida.R
@@ -52,7 +53,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun CustomCalendar(
+fun MainCalendar(
     events: Map<LocalDate, List<TodayItemData>>,
     onDateClick: (LocalDate) -> Unit,
     updateTitle: (String) -> Unit
@@ -96,7 +97,7 @@ fun CustomCalendar(
             state = state,
             dayContent = { day ->
                 if (day.position == DayPosition.MonthDate) {
-                    Day(
+                    MainDay(
                         day,
                         isSelected = selectedDate == day.date,
                         hasEvents = day.date in events
@@ -119,6 +120,64 @@ fun CustomCalendar(
     }
 
 }
+
+@Composable
+fun BottomSheetCalendar() {
+    val currentMonth = remember { YearMonth.now() }
+    val startMonth = remember { currentMonth.minusMonths(50) }
+    val endMonth = remember { currentMonth.plusMonths(100) }
+    val daysOfWeek = remember { daysOfWeek() }
+    val today = remember { LocalDate.now() }
+    var selectedDate by remember { mutableStateOf(today) }
+
+    Column(
+        modifier = Modifier
+            .padding(vertical = 20.dp)
+    ) {
+        val state = rememberCalendarState(
+            startMonth = startMonth,
+            endMonth = endMonth,
+            firstVisibleMonth = currentMonth,
+            firstDayOfWeek = daysOfWeek.first()
+        )
+        val visibleMonth by remember { derivedStateOf { state.firstVisibleMonth.yearMonth } }
+        val coroutineScope = rememberCoroutineScope()
+
+        CalendarTitle(
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+            visibleMonth = visibleMonth,
+            goToPrevious = {
+                coroutineScope.launch {
+                    state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.previousMonth)
+                }
+            },
+            goToNext = {
+                coroutineScope.launch {
+                    state.animateScrollToMonth(state.firstVisibleMonth.yearMonth.nextMonth)
+                }
+            }
+        )
+        HorizontalCalendar(
+            state = state,
+            dayContent = { day ->
+                if (day.position == DayPosition.MonthDate) {
+                    BottomSheetDay(
+                        day,
+                        isSelected = selectedDate == day.date
+                    ) { selectedDay ->
+                        selectedDate  = if (selectedDate == selectedDay.date) null else selectedDay.date
+                    }
+                }
+            },
+            monthHeader = {
+                MonthHeader(daysOfWeek = daysOfWeek)
+            }
+        )
+    }
+
+}
+
+
 @Composable
 fun CalendarTitle(
     modifier: Modifier,
@@ -198,7 +257,7 @@ fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
     }
 }
 @Composable
-fun Day(
+fun MainDay(
     day: CalendarDay,
     isSelected: Boolean,
     hasEvents: Boolean,
@@ -247,6 +306,44 @@ fun Day(
     }
 }
 
+@Composable
+fun BottomSheetDay(
+    day: CalendarDay,
+    isSelected: Boolean,
+    onClick: (CalendarDay) -> Unit
+) {
+    val selectedDate = remember { mutableStateOf<LocalDate?>(day.date) }
+    val textColor = when {
+        day.date == LocalDate.now() -> colorResource(id = R.color.main_blue)
+        day.date.dayOfWeek == DayOfWeek.SUNDAY -> colorResource(id = R.color.error)
+        isHoliday(day.date) -> colorResource(id = R.color.error)
+        else -> colorResource(id = R.color.text_high)
+    }
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f) // square size
+            .clickable(
+                onClick = {
+                    onClick(day)
+                },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            )
+            .padding(13.dp)
+            .clip(CircleShape)
+            .background(color = if (isSelected) colorResource(id = R.color.blue3) else Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = day.date.dayOfMonth.toString(),
+            fontFamily = Pretendard,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            color = textColor
+        )
+    }
+}
+
 // 공휴일 리스트 2024년 업데이트
 fun isHoliday(date: LocalDate): Boolean {
     val holidays = listOf(
@@ -265,4 +362,10 @@ fun isHoliday(date: LocalDate): Boolean {
         LocalDate.of(date.year, 12, 25), // 성탄절
     )
     return date in holidays
+}
+
+@Composable
+@Preview
+fun CalendarPreview() {
+    BottomSheetCalendar()
 }

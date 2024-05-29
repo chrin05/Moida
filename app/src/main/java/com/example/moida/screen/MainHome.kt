@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moida.component.CustomCalendar
 import com.example.moida.component.HomeTitle
+import com.example.moida.component.MainCalendar
 import com.example.moida.component.TodayItem
 import com.example.moida.component.TodayItemList
 import com.example.moida.component.UpcomingItem
@@ -49,7 +49,7 @@ fun MainHome(
             HomeTitle()
         }
         item{
-            CustomCalendar(
+            MainCalendar(
                 events = todayEvents,
                 onDateClick = {date ->
                     selectedEvents = todayEvents[date].orEmpty()
