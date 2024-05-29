@@ -2,13 +2,16 @@ package com.example.moida.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moida.R
+import com.example.moida.model.TodayItemData
 import com.example.moida.ui.theme.Pretendard
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -48,12 +52,17 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun CustomCalendar() {
+fun CustomCalendar(
+    events: Map<LocalDate, List<TodayItemData>>,
+    onDateClick: (LocalDate) -> Unit,
+    updateTitle: (String) -> Unit
+) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(50) }
     val endMonth = remember { currentMonth.plusMonths(100) }
     val daysOfWeek = remember { daysOfWeek() }
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    val today = remember { LocalDate.now() }
+    var selectedDate by remember { mutableStateOf(today) }
 
 
     Column(
@@ -87,11 +96,21 @@ fun CustomCalendar() {
             state = state,
             dayContent = { day ->
                 if (day.position == DayPosition.MonthDate) {
-                    Day(day, isSelected = selectedDate == day.date) {selectedDay ->
-                        selectedDate = if (selectedDate == selectedDay.date) null else selectedDay.date
+                    Day(
+                        day,
+                        isSelected = selectedDate == day.date,
+                        hasEvents = day.date in events
+                    ) { selectedDay ->
+                        selectedDate  = selectedDay.date
+                        val title = if (selectedDate == today) {
+                            "오늘의 일정"
+                        } else {
+                            "${selectedDate.monthValue}월 ${selectedDate.dayOfMonth}일의 일정"
+                        }
+                        updateTitle(title)
+                        onDateClick(selectedDay.date)
                     }
                 }
-
             },
             monthHeader = {
                 MonthHeader(daysOfWeek = daysOfWeek)
@@ -179,9 +198,14 @@ fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
     }
 }
 @Composable
-fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) -> Unit) {
+fun Day(
+    day: CalendarDay,
+    isSelected: Boolean,
+    hasEvents: Boolean,
+    onClick: (CalendarDay) -> Unit
+) {
     val textColor = when {
-        isSelected -> colorResource(id = R.color.main_blue)
+        day.date == LocalDate.now() -> colorResource(id = R.color.main_blue)
         day.date.dayOfWeek == DayOfWeek.SUNDAY -> colorResource(id = R.color.error)
         isHoliday(day.date) -> colorResource(id = R.color.error)
         else -> colorResource(id = R.color.text_high)
@@ -189,13 +213,21 @@ fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) -> Unit) {
 
     Box(
         modifier = Modifier
-            .padding(10.dp)
             .aspectRatio(1f) // square size
-            .clip(CircleShape)
-            .background(color = if (isSelected) colorResource(id = R.color.blue3) else Color.Transparent)
-            .clickable(onClick = { onClick(day) }),
+            .clickable(
+                onClick = { onClick(day) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ),
         contentAlignment = Alignment.Center
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(13.dp)
+                .clip(CircleShape)
+                .background(color = if (isSelected) colorResource(id = R.color.blue3) else Color.Transparent)
+        )
         Text(
             text = day.date.dayOfMonth.toString(),
             fontFamily = Pretendard,
@@ -203,6 +235,15 @@ fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) -> Unit) {
             fontSize = 14.sp,
             color = textColor
         )
+        if (hasEvents) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 40.dp)
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(id = R.color.blue1))
+            )
+        }
     }
 }
 

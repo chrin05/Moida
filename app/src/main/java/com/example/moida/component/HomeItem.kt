@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moida.R
 import com.example.moida.model.TodayItemData
-import com.example.moida.model.TodayViewModel
 import com.example.moida.model.UpcomingItemData
 import com.example.moida.model.UpcomingViewModel
 import com.example.moida.ui.theme.Pretendard
@@ -37,7 +36,7 @@ import com.example.moida.ui.theme.Pretendard
 fun TodayItem(item: TodayItemData) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = 6.dp
         ),
         modifier = Modifier
             .fillMaxWidth(),
@@ -80,7 +79,7 @@ fun TodayItem(item: TodayItemData) {
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                     Text(
-                        text = item.group,
+                        text = item.category,
                         fontFamily = Pretendard,
                         fontWeight = FontWeight.Medium,
                         fontSize = 14.sp,
@@ -96,7 +95,7 @@ fun TodayItem(item: TodayItemData) {
 fun UpcomingItem(item: UpcomingItemData) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = 6.dp
         ),
         modifier = Modifier
             .fillMaxWidth(),
@@ -158,7 +157,7 @@ fun UpcomingItem(item: UpcomingItemData) {
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                     Text(
-                        text = item.group,
+                        text = item.category,
                         fontFamily = Pretendard,
                         fontWeight = FontWeight.Medium,
                         fontSize = 14.sp,
@@ -173,16 +172,16 @@ fun UpcomingItem(item: UpcomingItemData) {
 }
 
 @Composable
-fun TodayItemList(todayViewModel: TodayViewModel = viewModel()) {
+fun TodayItemList(todayItemCount: Int, title: String) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp, bottom = 15.dp),
+                .padding(top = 25.dp, bottom = 15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "오늘의 일정",
+                text = title,
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -203,7 +202,7 @@ fun TodayItemList(todayViewModel: TodayViewModel = viewModel()) {
                     modifier = Modifier.fillMaxSize()
                 ){
                     Text(
-                        text = todayViewModel.getItemCount().toString(),
+                        text = todayItemCount.toString(),
                         fontSize = 12.sp,
                         fontFamily = Pretendard,
                         fontWeight = FontWeight.Bold,
@@ -264,12 +263,12 @@ fun ItemPreview() {
     Column {
         TodayItem(
             item = TodayItemData(
-                "12:00", "2차 스터디", "compose 스터디"
+                "2024.05.28", "12:00", "2차 스터디", "compose 스터디"
             )
         )
         UpcomingItem(
             item = UpcomingItemData(
-                "2024. 05. 10", "2024. 05. 17", "3차 스터디", "compose 스터디"
+                "2024.05.10", "2024.05.17", "3차 스터디", "compose 스터디"
             )
         )
     }
