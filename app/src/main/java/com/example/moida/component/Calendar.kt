@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moida.R
-import com.example.moida.model.TodayItemData
 import com.example.moida.ui.theme.Pretendard
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -53,10 +52,11 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun MainCalendar(
-    events: Map<LocalDate, List<TodayItemData>>,
+fun <T> MainCalendar(
+    events: Map<LocalDate, List<T>>,
     onDateClick: (LocalDate) -> Unit,
-    updateTitle: (String) -> Unit
+    updateTitle: (String) -> Unit,
+    hasEvents: (LocalDate, Map<LocalDate, List<T>>) -> Boolean
 ) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(50) }
@@ -68,7 +68,7 @@ fun MainCalendar(
 
     Column(
         modifier = Modifier
-            .padding(vertical = 20.dp)
+            .padding(vertical = 20.dp, horizontal = 24.dp)
     ) {
         val state = rememberCalendarState(
             startMonth = startMonth,
@@ -100,7 +100,7 @@ fun MainCalendar(
                     MainDay(
                         day,
                         isSelected = selectedDate == day.date,
-                        hasEvents = day.date in events
+                        hasEvents = hasEvents(day.date, events)
                     ) { selectedDay ->
                         selectedDate  = selectedDay.date
                         val title = if (selectedDate == today) {
@@ -118,7 +118,6 @@ fun MainCalendar(
             }
         )
     }
-
 }
 
 @Composable
