@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,9 +34,12 @@ fun MainHome(
     upcomingViewModel: UpcomingViewModel = viewModel(),
 ) {
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-    val todayEvents = todayViewModel.itemList.groupBy { LocalDate.parse(it.date, dateFormatter) }
+    val todayEvents by todayViewModel.itemList.collectAsState()
+    val upcomingEvents by upcomingViewModel.itemList.collectAsState()
+
+    val groupedTodayEvents = todayEvents.groupBy { LocalDate.parse(it.date, dateFormatter) }
     val todayDate = remember { LocalDate.now() }
-    var selectedEvents by remember { mutableStateOf(todayEvents[todayDate].orEmpty()) }
+    var selectedEvents by remember { mutableStateOf(groupedTodayEvents[todayDate].orEmpty()) }
     var title by remember { mutableStateOf("오늘의 일정") }
 
     LazyColumn(
@@ -50,9 +54,9 @@ fun MainHome(
         }
         item{
             MainCalendar(
-                events = todayEvents,
+                events = groupedTodayEvents,
                 onDateClick = {date ->
-                    selectedEvents = todayEvents[date].orEmpty()
+                    selectedEvents = groupedTodayEvents[date].orEmpty()
                 },
                 updateTitle = {it ->
                     title = it
@@ -71,7 +75,7 @@ fun MainHome(
             UpcomingItemList()
         }
         // 대기 중인 일정 리스트
-        items(upcomingViewModel.itemList) {item ->
+        items(upcomingEvents) {item ->
             UpcomingItem(item)
             Spacer(modifier = Modifier.height(10.dp))
         }
