@@ -1,12 +1,12 @@
 package com.example.moida.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,14 +45,13 @@ fun MainHome(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
             .background(color = Color.White)
     ) {
 
-        item{
+        item {
             HomeTitle()
         }
-        item{
+        item {
             MainCalendar(
                 events = groupedTodayEvents,
                 onDateClick = {date ->
@@ -60,26 +59,43 @@ fun MainHome(
                 },
                 updateTitle = {it ->
                     title = it
+                },
+                hasEvents = {date, events ->
+                    events[date]?.isNotEmpty() == true
                 }
             )
         }
-        item{
+        item {
             TodayItemList(selectedEvents.size, title)
         }
         // 오늘의 일정 리스트
-        items(selectedEvents) { item ->
-            TodayItem(item)
-            Spacer(modifier = Modifier.height(10.dp))
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+            ) {
+                selectedEvents.forEach { item ->
+                    TodayItem(item)
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
         }
         item {
             UpcomingItemList()
         }
         // 대기 중인 일정 리스트
-        items(upcomingEvents) {item ->
-            UpcomingItem(item)
-            Spacer(modifier = Modifier.height(10.dp))
+        item {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 100.dp)
+            ){
+                upcomingEvents.forEach {item ->
+                    UpcomingItem(item)
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
         }
-
     }
 }
 
