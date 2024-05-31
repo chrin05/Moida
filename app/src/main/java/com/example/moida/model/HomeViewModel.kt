@@ -2,9 +2,7 @@ package com.example.moida.model
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import java.time.format.DateTimeFormatter
 
-val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 class TodayViewModel() : ViewModel() {
     var itemList = mutableStateListOf<TodayItemData>()
         private set
