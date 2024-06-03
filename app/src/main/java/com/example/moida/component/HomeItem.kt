@@ -1,6 +1,7 @@
 package com.example.moida.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moida.R
+import com.example.moida.model.GroupItemData
 import com.example.moida.model.TodayItemData
 import com.example.moida.model.UpcomingItemData
 import com.example.moida.model.UpcomingViewModel
@@ -172,8 +174,63 @@ fun UpcomingItem(item: UpcomingItemData) {
 }
 
 @Composable
+fun GroupItem(item: GroupItemData) {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
+
+    ) {
+        Box(
+            modifier = Modifier.padding(all = 20.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.time,
+                    fontFamily = Pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    color = colorResource(id = R.color.text_high),
+                    modifier = Modifier.padding(end = 20.dp)
+                )
+
+                Divider(
+                    color = colorResource(id = R.color.disabled),
+                    modifier = Modifier
+                        .height(26.dp)
+                        .width(1.dp)
+                )
+
+                Column(
+                    modifier = Modifier.padding(start = 20.dp)
+                ) {
+                    Text(
+                        text = item.scheduleName,
+                        fontFamily = Pretendard,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = colorResource(id = R.color.text_high),
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun TodayItemList(todayItemCount: Int, title: String) {
-    Column {
+    Column(
+        modifier = Modifier
+        .padding(horizontal = 24.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -216,7 +273,10 @@ fun TodayItemList(todayItemCount: Int, title: String) {
 
 @Composable
 fun UpcomingItemList(upcomingViewModel: UpcomingViewModel = viewModel()) {
-    Column {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 24.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -260,7 +320,10 @@ fun UpcomingItemList(upcomingViewModel: UpcomingViewModel = viewModel()) {
 @Preview
 @Composable
 fun ItemPreview() {
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
         TodayItem(
             item = TodayItemData(
                 "2024.05.28", "12:00", "2차 스터디", "compose 스터디"
@@ -269,6 +332,11 @@ fun ItemPreview() {
         UpcomingItem(
             item = UpcomingItemData(
                 "2024.05.10", "2024.05.17", "3차 스터디", "compose 스터디"
+            )
+        )
+        GroupItem(
+            item = GroupItemData(
+                "1차 스터디", "2024.05.31", "12:00"
             )
         )
     }

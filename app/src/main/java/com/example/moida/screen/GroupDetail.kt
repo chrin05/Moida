@@ -17,29 +17,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moida.component.HomeTitle
+import com.example.moida.component.GroupDetailTitle
+import com.example.moida.component.GroupItem
 import com.example.moida.component.MainCalendar
-import com.example.moida.component.TodayItem
 import com.example.moida.component.TodayItemList
-import com.example.moida.component.UpcomingItem
-import com.example.moida.component.UpcomingItemList
-import com.example.moida.model.TodayViewModel
-import com.example.moida.model.UpcomingViewModel
+import com.example.moida.model.GroupDetailViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun MainHome(
-    todayViewModel: TodayViewModel = viewModel(),
-    upcomingViewModel: UpcomingViewModel = viewModel(),
+fun GroupDetail(
+    groupDetailViewModel: GroupDetailViewModel = viewModel()
 ) {
-    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-    val todayEvents by todayViewModel.itemList.collectAsState()
-    val upcomingEvents by upcomingViewModel.itemList.collectAsState()
+    val groupInfo by groupDetailViewModel.groupInfo.collectAsState()
+    val itemList by groupDetailViewModel.itemList.collectAsState()
 
-    val groupedTodayEvents = todayEvents.groupBy { LocalDate.parse(it.date, dateFormatter) }
+    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    val todayEvents = itemList.groupBy { LocalDate.parse(it.date, dateFormatter) }
     val todayDate = remember { LocalDate.now() }
-    var selectedEvents by remember { mutableStateOf(groupedTodayEvents[todayDate].orEmpty()) }
+    var selectedEvents by remember { mutableStateOf(todayEvents[todayDate].orEmpty()) }
     var title by remember { mutableStateOf("오늘의 일정") }
 
     LazyColumn(
@@ -47,15 +43,14 @@ fun MainHome(
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-
-        item {
-            HomeTitle()
+        item { 
+            groupInfo?.let { GroupDetailTitle(group = it)}
         }
-        item {
+        item{
             MainCalendar(
-                events = groupedTodayEvents,
+                events = todayEvents,
                 onDateClick = {date ->
-                    selectedEvents = groupedTodayEvents[date].orEmpty()
+                    selectedEvents = todayEvents[date].orEmpty()
                 },
                 updateTitle = {it ->
                     title = it
@@ -65,7 +60,7 @@ fun MainHome(
                 }
             )
         }
-        item {
+        item{
             TodayItemList(selectedEvents.size, title)
         }
         // 오늘의 일정 리스트
@@ -73,29 +68,13 @@ fun MainHome(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
+                    .padding(bottom = 100.dp)
             ) {
                 selectedEvents.forEach { item ->
-                    TodayItem(item)
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
-        }
-        item {
-            UpcomingItemList()
-        }
-        // 대기 중인 일정 리스트
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 100.dp)
-            ){
-                upcomingEvents.forEach {item ->
-                    UpcomingItem(item)
+                    GroupItem(item)
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }
     }
 }
-
