@@ -1,10 +1,13 @@
 package com.example.moida.screen
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import com.google.firebase.auth.FirebaseAuthException
 
 object AuthUtils {
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> get() = _errorMessage
 
     val errorMessages = mapOf(
         "ERROR_INVALID_CUSTOM_TOKEN" to "유효하지 않은 커스텀 토큰입니다.",
@@ -33,5 +36,7 @@ object AuthUtils {
         }
     }
 
-    val errorMessage: MutableState<String?> = mutableStateOf(null)
+    fun setErrorMessage(message: String?) {
+        _errorMessage.value = message
+    }
 }
