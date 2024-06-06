@@ -2,29 +2,12 @@ package com.example.moida.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -42,27 +25,46 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moida.R
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
 
 @Composable
-fun SignIn() {
-    var id by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
+fun SignIn(viewModel: SignInViewModel = viewModel()) {
+    val context = LocalContext.current
+
+    // 초기화 메서드 호출
+    LaunchedEffect(viewModel) {
+        viewModel.initialize(context)
+    }
+
+    val id by viewModel.id.collectAsState()
+    val password by viewModel.password.collectAsState()
+    val userName by viewModel.userName.collectAsState()
+    val errorMessage by AuthUtils.errorMessage.collectAsState()
+    val lastLoggedOutEmail by viewModel.lastLoggedOutEmail.collectAsState()
     val focusManager = LocalFocusManager.current
     var isIdFocused by remember { mutableStateOf(false) }
     var isPasswordFocused by remember { mutableStateOf(false) }
-    var isNameFocused by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val auth = remember { FirebaseAuth.getInstance() }
-    val errorMessage = AuthUtils.errorMessage
-    var userName by remember { mutableStateOf<String?>(null) }
-    val db = Firebase.firestore
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(lastLoggedOutEmail) {
+        lastLoggedOutEmail?.let {
+            Toast.makeText(context, "$it 에서 로그아웃했습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(userName) {
+        userName?.let {
+            Toast.makeText(context, "로그인 성공: $it", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -115,7 +117,7 @@ fun SignIn() {
             ) {
                 BasicTextField(
                     value = id,
-                    onValueChange = { id = it },
+                    onValueChange = { viewModel.onIdChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp, 8.dp, 8.dp)
@@ -156,7 +158,7 @@ fun SignIn() {
             ) {
                 BasicTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { viewModel.onPasswordChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp, 8.dp, 8.dp)
@@ -192,12 +194,11 @@ fun SignIn() {
                         .align(Alignment.BottomCenter)
                 )
             }
-
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        errorMessage.value?.let {
+        errorMessage?.let {
             Text(
                 text = it,
                 color = Color.Red,
@@ -213,33 +214,29 @@ fun SignIn() {
 
         Button(
             onClick = {
-                if (id.isNotEmpty() && password.isNotEmpty()) {
-                    auth.signInWithEmailAndPassword(id, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val user = auth.currentUser
-                                if (user != null) {
-                                    db.collection("users").document(user.uid).get()
-                                        .addOnSuccessListener { document ->
-                                            if (document != null) {
-                                                userName = document.getString("name")
-                                                Toast.makeText(context, "로그인 성공, ${userName}", Toast.LENGTH_SHORT).show()
-                                                errorMessage.value = null
-                                            } else {
-                                                errorMessage.value = "사용자 정보를 가져올 수 없습니다."
-                                            }
-                                        }
-                                        .addOnFailureListener { e ->
-                                            errorMessage.value = "사용자 정보를 가져오는 데 실패했습니다: ${e.message}"
-                                        }
-                                }
-                            } else {
-                                errorMessage.value = AuthUtils.getErrorMessage(task.exception)
-                            }
-                        }
-                } else {
-                    errorMessage.value = "모든 필드를 입력해주세요"
-                }
+                viewModel.signOut()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.main_blue)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Text(
+                text = "로그아웃 테스트",
+                color = Color.White,
+                fontFamily = Pretendard,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+
+        Button(
+            onClick = {
+                viewModel.signIn(context = context)
             },
             enabled = id.isNotEmpty() && password.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
@@ -261,12 +258,13 @@ fun SignIn() {
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun RegistrationScreenPreview2() {
+fun SignInPreview() {
     MoidaTheme {
         SignIn()
     }

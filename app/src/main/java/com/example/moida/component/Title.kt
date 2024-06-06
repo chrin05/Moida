@@ -35,7 +35,7 @@ import com.example.moida.model.GroupInfo
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun Title(title: String, rightBtn: String, rightColor: Int) {
+fun Title(title: String, rightBtn: String, rightColor: Int?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,13 +56,23 @@ fun Title(title: String, rightBtn: String, rightColor: Int) {
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
-        Text(
-            text = rightBtn,
-            fontFamily = Pretendard,
-            fontWeight = FontWeight.Bold,
-            color = Color(rightColor),
-            fontSize = 18.sp
-        )
+
+        if (rightColor!=null) {
+            Text(
+                text = rightBtn,
+                fontFamily = Pretendard,  
+                fontWeight = FontWeight.Bold,
+                color = Color(rightColor),
+                fontSize = 18.sp
+            )
+        } else {
+            Text(
+                text = rightBtn,
+                fontFamily = Pretendard,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
     }
 }
 

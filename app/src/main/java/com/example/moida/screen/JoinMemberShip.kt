@@ -1,9 +1,6 @@
-package com.example.moida
+package com.example.moida.screen
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -28,31 +25,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moida.R
-import com.example.moida.screen.AuthUtils
-import com.example.moida.screen.AuthUtils.errorMessages
-import com.example.moida.screen.AuthUtils.getErrorMessage
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 @Composable
-fun JoinMemberShip() {
-    var id by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
+fun JoinMembership(viewModel: JoinMembershipViewModel = viewModel()) {
+    val id by viewModel.id.collectAsState()
+    val password by viewModel.password.collectAsState()
+    val name by viewModel.name.collectAsState()
+    val errorMessage by AuthUtils.errorMessage.collectAsState()
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     var isIdFocused by remember { mutableStateOf(false) }
     var isPasswordFocused by remember { mutableStateOf(false) }
     var isNameFocused by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val auth = remember { FirebaseAuth.getInstance() }
-    val errorMessage = AuthUtils.errorMessage
-    val db = Firebase.firestore
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -60,10 +54,11 @@ fun JoinMemberShip() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 16.dp, 48.dp, 0.dp),
+                .padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* 전 화면으로 돌아가기 */ }) {
+            IconButton(onClick = { /* 전 화면으로 돌아가기 */ },
+                modifier = Modifier.weight(1f)) {
                 Icon(
                     painter = painterResource(id = R.drawable.chevron_left),
                     contentDescription = "Back"
@@ -72,31 +67,32 @@ fun JoinMemberShip() {
             Text(
                 text = "회원가입",
                 fontFamily = Pretendard,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(6f)
             )
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         Divider(
             color = colorResource(id = R.color.main_blue),
-            thickness = 2.dp,
+            thickness = 4.dp,
             modifier = Modifier.fillMaxWidth()
         )
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp, 30.dp, 16.dp, 16.dp)
+                .padding(20.dp, 20.dp, 16.dp, 16.dp)
         ) {
             Text(
-                text = "로그인 정보를 입력해주세요",
+                text = "로그인 정보를 입력해주세요.",
                 fontFamily = Pretendard,
-                fontSize = 25.sp,
+                fontSize = 26.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 24.dp)
+                modifier = Modifier.padding(vertical = 12.dp)
             )
 
             Box(
@@ -105,7 +101,7 @@ fun JoinMemberShip() {
             ) {
                 BasicTextField(
                     value = id,
-                    onValueChange = { id = it },
+                    onValueChange = { viewModel.onIdChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp, 8.dp, 8.dp)
@@ -146,7 +142,7 @@ fun JoinMemberShip() {
             ) {
                 BasicTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { viewModel.onPasswordChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp, 8.dp, 8.dp)
@@ -184,9 +180,9 @@ fun JoinMemberShip() {
             }
 
             Text(
-                text = "이름을 입력해주세요",
+                text = "이름을 입력해주세요.",
                 fontFamily = Pretendard,
-                fontSize = 25.sp,
+                fontSize = 26.sp,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(vertical = 24.dp)
@@ -198,7 +194,7 @@ fun JoinMemberShip() {
             ) {
                 BasicTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { viewModel.onNameChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp, 8.dp, 8.dp)
@@ -236,7 +232,7 @@ fun JoinMemberShip() {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        errorMessage.value?.let {
+        errorMessage?.let {
             Text(
                 text = it,
                 color = Color.Red,
@@ -252,33 +248,7 @@ fun JoinMemberShip() {
 
         Button(
             onClick = {
-                if (id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty()) {
-                    auth.createUserWithEmailAndPassword(id, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val user = auth.currentUser
-                                val userId = user?.uid
-                                val userData = hashMapOf(
-                                    "name" to name,
-                                    "email" to id
-                                )
-                                if (userId != null) {
-                                    db.collection("users").document(userId).set(userData)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(context, "회원가입 성공", Toast.LENGTH_SHORT).show()
-                                            errorMessage.value = null
-                                        }
-                                        .addOnFailureListener { e ->
-                                            errorMessage.value = "회원가입 성공, 하지만 Firestore에 저장 실패: ${e.message}"
-                                        }
-                                }
-                            } else {
-                                errorMessage.value = AuthUtils.getErrorMessage(task.exception)
-                            }
-                        }
-                } else {
-                    errorMessage.value = "모든 필드를 입력해주세요"
-                }
+                viewModel.signUp()
             },
             enabled = id.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
@@ -305,8 +275,8 @@ fun JoinMemberShip() {
 
 @Preview(showBackground = true)
 @Composable
-fun RegistrationScreenPreview() {
+fun JoinMembershipPreview() {
     MoidaTheme {
-        JoinMemberShip()
+        JoinMembership()
     }
 }
