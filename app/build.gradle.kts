@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.7.0-beta01")
     implementation("com.google.firebase:firebase-common-ktx:21.0.0")
     implementation("com.google.firebase:firebase-analytics:22.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

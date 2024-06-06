@@ -8,6 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.moida.screen.GroupDetail
+import com.example.moida.screen.JoinMembership
+import com.example.moida.screen.MainHome
+import com.example.moida.screen.SignIn
 import com.example.moida.ui.theme.MoidaTheme
 import com.google.firebase.FirebaseApp
 
@@ -22,9 +25,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    SignIn()
-//                    MainHome()
-                    GroupDetail()
+                    // SignIn()
+                    JoinMembership()
+                    //MainHome()
+                    //GroupDetail()
                 }
             }
         }
