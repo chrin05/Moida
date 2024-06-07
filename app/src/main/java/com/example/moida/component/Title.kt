@@ -91,6 +91,58 @@ fun Title(
 }
 
 @Composable
+fun TitleWithXBtn(
+    navController: NavHostController,
+    route: String,
+    title: String,
+    rightBtn: Boolean,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_x_close),
+            contentDescription = "뒤로가기",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(24.dp)
+                .clickable {
+                    navController.navigate(route) {
+                        popUpTo(route) { inclusive = true }
+                    }
+                }
+        )
+        Text(
+            text = title,
+            fontFamily = Pretendard,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+        if (rightBtn) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_dots_vertical),
+                contentDescription = "뒤로가기",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { }
+            )
+        } else {
+            Box(
+                modifier = Modifier.size(24.dp)
+            ) {
+
+            }
+        }
+
+    }
+}
+
+@Composable
 fun HomeTitle(
     navController: NavHostController,
 ) {
@@ -109,7 +161,7 @@ fun HomeTitle(
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Routes.CreateMySchedule.route)
+                navController.navigate(Routes.CreateGroupSchedule.route)
             },
             modifier = Modifier
                 .wrapContentSize(),

@@ -81,13 +81,14 @@ fun CreateGroupSchedule(navController: NavHostController) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            activate = name.isNotEmpty() && date.isNotEmpty() //activate 다시 건들이기
+            //activate = name.isNotEmpty() //activate 다시 건들이기
+            activate = name.isNotEmpty()
 
             BottomBtn(
                 navController = navController,
-                route = Routes.CreateMySchedule.route,
+                route = Routes.TimeSheet.route,
                 btnName = "만들기",
-                activate = activate
+                activate = true
             )
         }
     }

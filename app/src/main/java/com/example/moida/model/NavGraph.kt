@@ -10,6 +10,7 @@ import com.example.moida.screen.CreateMySchedule
 import com.example.moida.screen.MainHome
 import com.example.moida.screen.MyPage
 import com.example.moida.screen.ScheduleDetail
+import com.example.moida.screen.TimeSheet
 
 sealed class BottomNavItem(val title: Int, val icon: Int, var route: String) {
     data object Home : BottomNavItem(R.string.home, R.drawable.home, "home")
@@ -21,6 +22,7 @@ sealed class Routes(val route: String){
     data object CreateMySchedule : Routes("createMySchedule")
     data object CreateGroupSchedule : Routes("createGroupSchedule")
     data object ScheduleDetail : Routes("scheduleDetail")
+    data object TimeSheet : Routes("timeSheet")
 
 }
 
@@ -47,6 +49,10 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Routes.ScheduleDetail.route) {
             ScheduleDetail(navController)
+        }
+
+        composable(Routes.TimeSheet.route) {
+            TimeSheet(navController, "")
         }
     }
 }

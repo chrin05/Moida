@@ -37,7 +37,10 @@ fun BottomBtn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp),
-        onClick = { navController.navigate(route) }, //navController.navigate(route)
+        onClick = {
+            if (activate) navController.navigate(route)
+            else { }
+        },
         colors = ButtonDefaults.buttonColors(
             containerColor = if (activate) colorResource(id = R.color.main_blue) else colorResource(
                 id = R.color.disabled
