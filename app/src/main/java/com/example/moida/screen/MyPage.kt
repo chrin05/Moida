@@ -23,11 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun MyPage() {
+fun MyPage(navController: NavHostController) {
     Column(
         Modifier.background(Color.White)
     ) {
