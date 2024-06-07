@@ -24,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.component.BottomBtn
 import com.example.moida.component.DateField
 import com.example.moida.component.NameTextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
+import com.example.moida.model.Routes
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
@@ -39,6 +41,7 @@ fun CreateGroupSchedule(navController: NavHostController) {
     ) {
         var name by remember { mutableStateOf("") }
         var date by remember { mutableStateOf("") }
+        var activate by remember { mutableStateOf(false) }
 
         Title(
             navController = navController,
@@ -75,6 +78,17 @@ fun CreateGroupSchedule(navController: NavHostController) {
                     color = colorResource(id = R.color.gray_800),
                 )
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            activate = name.isNotEmpty() && date.isNotEmpty() //activate 다시 건들이기
+
+            BottomBtn(
+                navController = navController,
+                route = Routes.CreateMySchedule.route,
+                btnName = "만들기",
+                activate = activate
+            )
         }
     }
 }
