@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -69,6 +70,7 @@ fun NameTextField(
         modifier = Modifier
     ) {
         var name by remember { mutableStateOf("") }
+        var isFocused by remember { mutableStateOf(false) }
 
         FieldTitle(title = title)
         Row(
@@ -77,7 +79,13 @@ fun NameTextField(
                 .padding(top = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            InputEditText(value = name, modifier = Modifier, onValueChange = { name = it })
+            InputEditText(
+                value = name,
+                modifier = Modifier.onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                },
+                onValueChange = { name = it }
+            )
             if (name.isNotEmpty()) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_clear_button),
@@ -91,13 +99,14 @@ fun NameTextField(
                 //입력이 안되어 있을 땐 아이콘 안보이게
             }
         }
+        val lineColor = if (isFocused) colorResource(id = R.color.main_blue) else colorResource(id = R.color.gray_300)
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.5.dp)
         ) {
             drawLine(
-                color = Color.Gray,
+                color = lineColor,
                 start = Offset(0f, 10f),
                 end = Offset(size.width, 10f),
                 strokeWidth = 5f
