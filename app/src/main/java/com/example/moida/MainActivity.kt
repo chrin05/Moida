@@ -26,8 +26,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // SignIn()
-                    JoinMembership()
-                    //MainHome()
+                    // JoinMembership()
+                    MainHome()
                     //GroupDetail()
                 }
             }
