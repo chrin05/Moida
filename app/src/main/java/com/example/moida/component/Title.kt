@@ -3,6 +3,7 @@ package com.example.moida.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,25 +31,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.GroupInfo
+import com.example.moida.model.Routes
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun Title(title: String, rightBtn: String, rightColor: Int?) {
+fun Title(
+    navController: NavHostController, 
+    route: String, 
+    title: String, 
+    rightBtn: String, 
+    rightColor: Int?
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Image(
             painter = painterResource(id = R.drawable.ic_left_shevron),
             contentDescription = "뒤로가기",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(24.dp)
+                .clickable {
+                    navController.navigate(route) {
+                        popUpTo(route) { inclusive = true }
+                    }
+                }
         )
         Text(
             text = title,
@@ -57,12 +71,12 @@ fun Title(title: String, rightBtn: String, rightColor: Int?) {
             fontSize = 18.sp
         )
 
-        if (rightColor!=null) {
+        if (rightColor != null) {
             Text(
                 text = rightBtn,
-                fontFamily = Pretendard,  
+                fontFamily = Pretendard,
                 fontWeight = FontWeight.Bold,
-                color = Color(rightColor),
+                color =  colorResource(id = rightColor),
                 fontSize = 18.sp
             )
         } else {
@@ -77,7 +91,61 @@ fun Title(title: String, rightBtn: String, rightColor: Int?) {
 }
 
 @Composable
-fun HomeTitle() {
+fun TitleWithXBtn(
+    navController: NavHostController,
+    route: String,
+    title: String,
+    rightBtn: Boolean,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_x_close),
+            contentDescription = "뒤로가기",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(24.dp)
+                .clickable {
+                    navController.navigate(route) {
+                        popUpTo(route) { inclusive = true }
+                    }
+                }
+        )
+        Text(
+            text = title,
+            fontFamily = Pretendard,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+        if (rightBtn) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_dots_vertical),
+                contentDescription = "뒤로가기",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { }
+            )
+        } else {
+            Box(
+                modifier = Modifier.size(24.dp)
+            ) {
+
+            }
+        }
+
+    }
+}
+
+@Composable
+fun HomeTitle(
+    navController: NavHostController,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,10 +157,12 @@ fun HomeTitle() {
         Icon(
             painter = painterResource(id = R.drawable.moida_logo),
             contentDescription = "로고"
-            )
+        )
 
         OutlinedButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                navController.navigate(Routes.CreateGroupSchedule.route)
+            },
             modifier = Modifier
                 .wrapContentSize(),
             border = BorderStroke(1.dp, colorResource(id = R.color.main_blue)),
@@ -169,10 +239,10 @@ fun GroupDetailTitle(group: GroupInfo) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 26.sp,
                 color = colorResource(id = R.color.text_high)
-                )
+            )
 
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 modifier = Modifier
                     .wrapContentSize()
                     .padding(top = 37.dp),
@@ -211,9 +281,9 @@ fun GroupDetailTitle(group: GroupInfo) {
     }
 }
 
-@Composable
-@Preview
-fun TitlePreview() {
-    GroupDetailTitle(group = GroupInfo("Compose 스터디", R.drawable.sample_image8, 4))
-
-}
+//@Composable
+//@Preview
+//fun TitlePreview() {
+//    GroupDetailTitle(group = GroupInfo("Compose 스터디", R.drawable.sample_image8, 4))
+//
+//}

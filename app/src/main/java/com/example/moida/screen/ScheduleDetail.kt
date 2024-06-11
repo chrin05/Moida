@@ -1,6 +1,5 @@
 package com.example.moida.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,13 +15,14 @@ import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.DateField
 import com.example.moida.component.NameTextField
+import com.example.moida.component.ParticipantsField
+import com.example.moida.component.TextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
-import com.example.moida.model.Routes
 
 @Composable
-fun CreateMySchedule(
+fun ScheduleDetail(
     navController: NavHostController
 ) {
     Column(
@@ -36,7 +36,7 @@ fun CreateMySchedule(
         Title(
             navController = navController,
             route = BottomNavItem.Home.route,
-            title = "개인 일정 추가",
+            title = "상세 페이지",
             rightBtn = "추가",
             rightColor = R.color.main_blue
         )
@@ -45,11 +45,13 @@ fun CreateMySchedule(
             modifier = Modifier
                 .padding(start = 24.dp, top = 40.dp, end = 24.dp)
         ) {
-            NameTextField(title = "일정 이름", onValueChange = { name = it })
+            TextField(title = "일정 이름", value = "모바일프로그래밍")
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            DateField(title = "일정 날짜", onValueChange = { date = it })
+            TextField(title = "일정 날짜", value = "2024.04.04")
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            TimeField(title = "일정 시간", onValueChange = { time = it })
+            TextField(title = "일정 시간", value = "10:00")
+            Spacer(modifier = Modifier.padding(vertical = 20.dp))
+            ParticipantsField()
         }
     }
 }
