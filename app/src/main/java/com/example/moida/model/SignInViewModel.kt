@@ -27,13 +27,16 @@ class SignInViewModel : ViewModel() {
     private val _userName = MutableStateFlow<String?>(null)
     val userName: StateFlow<String?> get() = _userName
 
-    private val _lastLoggedOutEmail = MutableStateFlow<String?>(null)
-    val lastLoggedOutEmail: StateFlow<String?> get() = _lastLoggedOutEmail
-
     fun initialize(context: Context) {
-        prefsHelper = SharedPreferencesHelper(context)
+        prefsHelper = SharedPreferencesHelper(context) // SharedPreferencesHelper 초기화 추가
         val savedEmail = prefsHelper.getEmail()
         val savedPassword = prefsHelper.getPassword()
+        val savedUsername = prefsHelper.getUsername()
+
+        if (savedUsername != null) {
+            _userName.value = savedUsername
+        }
+
         if (savedEmail != null && savedPassword != null) {
             signIn(savedEmail, savedPassword, context)
         }
@@ -55,7 +58,11 @@ class SignInViewModel : ViewModel() {
                     val user = result.user
                     if (user != null) {
                         val document = db.collection("users").document(user.uid).get().await()
-                        _userName.value = document.getString("name")
+                        val username = document.getString("name")
+                        if (username != null) {
+                            prefsHelper.saveUsername(username)
+                            _userName.value = username // 유저네임 업데이트
+                        }
                         prefsHelper.saveLoginDetails(email, password)
                         AuthUtils.setErrorMessage(null)
                     } else {
@@ -70,11 +77,11 @@ class SignInViewModel : ViewModel() {
         }
     }
 
-    fun signOut() {
-        val email = auth.currentUser?.email
+    suspend fun signOut() {
         auth.signOut()
         _userName.value = null
-        prefsHelper.clearLoginDetails()
-        _lastLoggedOutEmail.value = email
+        _id.value = ""
+        _password.value = ""
+        prefsHelper.clearLoginDetails() // 자동 로그인 정보 제거
     }
 }

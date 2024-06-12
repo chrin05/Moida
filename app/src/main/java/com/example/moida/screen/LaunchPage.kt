@@ -26,15 +26,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
+import com.example.moida.model.BottomNavItem
 import com.example.moida.model.Routes
-import com.example.moida.screen.AuthUtils.errorMessage
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun LaunchPage(navController: NavHostController) {
+fun LaunchPage(navController: NavHostController, viewModel: SignInViewModel = viewModel()) {
+    val context = LocalContext.current
+
+    // 자동 로그인 확인
+    LaunchedEffect(Unit) {
+        viewModel.initialize(context)
+    }
+
+    val id by viewModel.userName.collectAsState()
+    LaunchedEffect(id) {
+        if (id != null) {
+            navController.navigate(BottomNavItem.Home.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -112,10 +132,10 @@ fun LaunchPage(navController: NavHostController) {
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun LaunchPagePreview() {
-//    MoidaTheme {
-//        LaunchPage()
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun LaunchPagePreview() {
+    MoidaTheme {
+        LaunchPage(navController = rememberNavController())
+    }
+}

@@ -31,6 +31,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
 import com.example.moida.model.BottomNavItem
+import com.example.moida.model.Routes
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
@@ -47,7 +48,6 @@ fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewMo
     val password by viewModel.password.collectAsState()
     val userName by viewModel.userName.collectAsState()
     val errorMessage by AuthUtils.errorMessage.collectAsState()
-    val lastLoggedOutEmail by viewModel.lastLoggedOutEmail.collectAsState()
     val focusManager = LocalFocusManager.current
     var isIdFocused by remember { mutableStateOf(false) }
     var isPasswordFocused by remember { mutableStateOf(false) }
@@ -55,12 +55,6 @@ fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewMo
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    LaunchedEffect(lastLoggedOutEmail) {
-        lastLoggedOutEmail?.let {
-            Toast.makeText(context, "$it 에서 로그아웃했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -84,7 +78,11 @@ fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewMo
                 .padding(0.dp, 16.dp, 48.dp, 0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* 전 화면으로 돌아가기 */ }) {
+            IconButton(onClick = {navController.navigate(Routes.LaunchPage.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }}) {
                 Icon(
                     painter = painterResource(id = R.drawable.chevron_left),
                     contentDescription = "Back"
@@ -218,28 +216,6 @@ fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewMo
                     .padding(32.dp)
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center
-            )
-        }
-
-        Button(
-            onClick = {
-                viewModel.signOut()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.main_blue)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(
-                text = "로그아웃 테스트",
-                color = Color.White,
-                fontFamily = Pretendard,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(vertical = 8.dp)
             )
         }
 

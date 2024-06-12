@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
@@ -71,7 +72,11 @@ fun JoinMembership(navController: NavHostController, viewModel: JoinMembershipVi
                 .padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* 전 화면으로 돌아가기 */ },
+            IconButton(onClick = {navController.navigate(Routes.LaunchPage.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }},
                 modifier = Modifier.weight(1f)) {
                 Icon(
                     painter = painterResource(id = R.drawable.chevron_left),
