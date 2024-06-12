@@ -2,7 +2,6 @@ package com.example.moida.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -19,33 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moida.R
 import com.example.moida.ui.theme.Pretendard
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
-
-
-@Composable
-fun HeadOfTime(
-    startDate: String,
-    startDay: Int
-) {
-    val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
-    var currentDate = LocalDate.parse("2024.05.05", DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-    var currentDay = DayOfWeek.MONDAY
-
-    Column {
-        for (i in 0 until 3) {
-            DateOfTimeSheet(
-                date = currentDate.format(dateFormatter),
-                day = currentDay.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault())
-            )
-
-            currentDate = currentDate.plusDays(1)
-            currentDay = currentDay.plus(1)
-        }
-    }
-}
 
 @Composable
 fun DateOfTimeSheet(
@@ -61,9 +33,13 @@ fun DateOfTimeSheet(
         textAlign = TextAlign.Center,
     )
 
-    Row {
+    Row(
+        modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+    ) {
+        val dayKorean = day.substring(0, 1)
         Text(text = date, style = textStyle)
-        Text(text = day, style = textStyle)
+        Spacer(modifier = Modifier.padding(end = 2.dp))
+        Text(text = dayKorean, style = textStyle)
     }
 }
 
@@ -87,7 +63,7 @@ fun NumberBlock(
             fontFamily = Pretendard,
             fontWeight = FontWeight(400),
             color = colorResource(id = R.color.gray_500),
-            )
+        )
     }
-    
+
 }

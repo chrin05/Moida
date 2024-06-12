@@ -2,8 +2,10 @@ package com.example.moida.model
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.screen.CreateGroupSchedule
 import com.example.moida.screen.CreateMySchedule
@@ -18,7 +20,7 @@ sealed class BottomNavItem(val title: Int, val icon: Int, var route: String) {
     data object My : BottomNavItem(R.string.my, R.drawable.my, "my")
 }
 
-sealed class Routes(val route: String){
+sealed class Routes(val route: String) {
     data object CreateMySchedule : Routes("createMySchedule")
     data object CreateGroupSchedule : Routes("createGroupSchedule")
     data object ScheduleDetail : Routes("scheduleDetail")
@@ -43,7 +45,7 @@ fun NavGraph(navController: NavHostController) {
             CreateMySchedule(navController)
         }
 
-        composable(Routes.CreateGroupSchedule.route){
+        composable(Routes.CreateGroupSchedule.route) {
             CreateGroupSchedule(navController)
         }
 
@@ -51,8 +53,20 @@ fun NavGraph(navController: NavHostController) {
             ScheduleDetail(navController)
         }
 
-        composable(Routes.TimeSheet.route) {
-            TimeSheet(navController, "")
+        composable(
+            route = Routes.TimeSheet.route + "?title={title}",
+            arguments = listOf(
+                navArgument("title") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            it.arguments?.getString("title")?.let { it1 ->
+                TimeSheet(
+                    navController,
+                    title = it1,
+                )
+            }
         }
     }
 }

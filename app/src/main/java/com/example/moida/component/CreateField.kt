@@ -84,7 +84,10 @@ fun NameTextField(
                 modifier = Modifier.onFocusChanged { focusState ->
                     isFocused = focusState.isFocused
                 },
-                onValueChange = { name = it }
+                onValueChange = {
+                    name = it
+                    onValueChange(name)
+                }
             )
             if (name.isNotEmpty()) {
                 Image(
