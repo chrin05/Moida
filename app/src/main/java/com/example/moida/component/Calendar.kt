@@ -131,7 +131,7 @@ fun BottomSheetCalendar() {
 
     Column(
         modifier = Modifier
-            .padding(vertical = 20.dp)
+            .padding(vertical = 10.dp)
     ) {
         val state = rememberCalendarState(
             startMonth = startMonth,
@@ -143,7 +143,7 @@ fun BottomSheetCalendar() {
         val coroutineScope = rememberCoroutineScope()
 
         CalendarTitle(
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+            modifier = Modifier.padding(vertical = 5.dp, horizontal = 4.dp),
             visibleMonth = visibleMonth,
             goToPrevious = {
                 coroutineScope.launch {
