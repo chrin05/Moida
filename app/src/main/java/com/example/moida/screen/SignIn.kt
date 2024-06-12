@@ -26,12 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
+import com.example.moida.model.BottomNavItem
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun SignIn(viewModel: SignInViewModel = viewModel()) {
+fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewModel()) {
     val context = LocalContext.current
 
     // 초기화 메서드 호출
@@ -63,6 +67,11 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
     LaunchedEffect(userName) {
         userName?.let {
             Toast.makeText(context, "로그인 성공: $it", Toast.LENGTH_SHORT).show()
+            navController.navigate(BottomNavItem.Home.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
         }
     }
 
@@ -266,6 +275,6 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
 @Composable
 fun SignInPreview() {
     MoidaTheme {
-        SignIn()
+        SignIn(navController = rememberNavController())
     }
 }

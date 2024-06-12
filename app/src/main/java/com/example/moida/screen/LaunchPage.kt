@@ -26,15 +26,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.model.Routes
 import com.example.moida.screen.AuthUtils.errorMessage
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun LaunchPage() {
-    val context = LocalContext.current
-
+fun LaunchPage(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +67,7 @@ fun LaunchPage() {
         ) {
             Button(
                 onClick = {
-                    /* 회원가입 클릭 */
+                    navController.navigate(Routes.JoinMembership.route)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.gray_200)
@@ -89,7 +89,7 @@ fun LaunchPage() {
 
             Button(
                 onClick = {
-                    /* 로그인 클릭 */
+                    navController.navigate(Routes.SignIn.route)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.main_blue)
@@ -112,10 +112,10 @@ fun LaunchPage() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LaunchPagePreview() {
-    MoidaTheme {
-        LaunchPage()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LaunchPagePreview() {
+//    MoidaTheme {
+//        LaunchPage()
+//    }
+//}

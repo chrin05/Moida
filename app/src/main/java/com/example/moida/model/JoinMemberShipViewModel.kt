@@ -25,6 +25,9 @@ class JoinMembershipViewModel() : ViewModel() {
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> get() = _name
 
+    private val _signUpSuccess = MutableStateFlow(false)
+    val signUpSuccess: StateFlow<Boolean> get() = _signUpSuccess
+
     fun onIdChange(newId: String) {
         _id.value = newId
     }
@@ -46,6 +49,7 @@ class JoinMembershipViewModel() : ViewModel() {
                     if (user != null) {
                         db.collection("users").document(user.uid).set(mapOf("name" to _name.value)).await()
                         AuthUtils.setErrorMessage("회원 가입에 성공했습니다.")
+                        _signUpSuccess.value = true
                     } else {
                         AuthUtils.setErrorMessage("회원 가입에 실패했습니다.")
                     }
