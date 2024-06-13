@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moida.R
+import com.example.moida.component.CalendarBottomSheet
 import com.example.moida.screen.CreateGroupSchedule
 import com.example.moida.screen.CreateMySchedule
 import com.example.moida.screen.JoinMembership
@@ -33,6 +34,7 @@ sealed class Routes(val route: String) {
     data object SignIn : Routes("signIn")
     data object JoinMembership : Routes("joinMembership")
     data object LaunchPage : Routes("launchPage")
+    data object CalendarBottomSheet : Routes("calendarBottomSheet")
 }
 
 @Composable
@@ -77,7 +79,8 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(
-            route = Routes.TimeInput.route) {
+            route = Routes.TimeInput.route
+        ) {
             TimeInput(navController)
         }
 
@@ -91,6 +94,10 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Routes.JoinMembership.route) {
             JoinMembership(navController)
+        }
+
+        composable(Routes.CalendarBottomSheet.route) {
+            CalendarBottomSheet(navController)
         }
     }
 }

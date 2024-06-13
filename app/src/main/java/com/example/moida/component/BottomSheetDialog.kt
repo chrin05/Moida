@@ -21,12 +21,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.ui.theme.Pretendard
+
+@Composable
+fun CalendarBottomSheet(
+    navcontroller: NavHostController,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        CalendarBottomSheetDialog(navcontroller, onDismiss = {})
+
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarBottomSheetDialog(
+    navcontroller: NavHostController,
     onDismiss: () -> Unit
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState()
@@ -49,7 +61,10 @@ fun CalendarBottomSheetDialog(
             BottomSheetCalendar()
 
             Button(
-                onClick = { },
+                onClick = {
+                          //onDismiss()값 넘기기
+                          navcontroller.popBackStack()
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (true) {
                         colorResource(id = R.color.main_blue)
@@ -73,13 +88,13 @@ fun CalendarBottomSheetDialog(
 }
 
 
-@Preview
-@Composable
-fun PreviewBottomSheetDialog(){
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        CalendarBottomSheetDialog(onDismiss = {})
-
-    }
-
-}
+//@Preview
+//@Composable
+//fun PreviewBottomSheetDialog(){
+//
+//    Column(modifier = Modifier.fillMaxSize()) {
+//        CalendarBottomSheetDialog(onDismiss = {})
+//
+//    }
+//
+//}
