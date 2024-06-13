@@ -95,6 +95,8 @@ class MainActivity : ComponentActivity() {
                     }
 
 //                    MainHome()
+//                    SignIn()
+//                    JoinMembership()
                 }
             }
         }
