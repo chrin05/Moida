@@ -26,12 +26,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
+import com.example.moida.model.BottomNavItem
+import com.example.moida.model.Routes
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun SignIn(viewModel: SignInViewModel = viewModel()) {
+fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewModel()) {
     val context = LocalContext.current
 
     // 초기화 메서드 호출
@@ -43,7 +48,6 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
     val password by viewModel.password.collectAsState()
     val userName by viewModel.userName.collectAsState()
     val errorMessage by AuthUtils.errorMessage.collectAsState()
-    val lastLoggedOutEmail by viewModel.lastLoggedOutEmail.collectAsState()
     val focusManager = LocalFocusManager.current
     var isIdFocused by remember { mutableStateOf(false) }
     var isPasswordFocused by remember { mutableStateOf(false) }
@@ -54,15 +58,14 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
         }
     }
 
-    LaunchedEffect(lastLoggedOutEmail) {
-        lastLoggedOutEmail?.let {
-            Toast.makeText(context, "$it 에서 로그아웃했습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     LaunchedEffect(userName) {
         userName?.let {
             Toast.makeText(context, "로그인 성공: $it", Toast.LENGTH_SHORT).show()
+            navController.navigate(BottomNavItem.Home.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
         }
     }
 
@@ -75,7 +78,11 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
                 .padding(0.dp, 16.dp, 48.dp, 0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* 전 화면으로 돌아가기 */ }) {
+            IconButton(onClick = {navController.navigate(Routes.LaunchPage.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }}) {
                 Icon(
                     painter = painterResource(id = R.drawable.chevron_left),
                     contentDescription = "Back"
@@ -214,28 +221,6 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
 
         Button(
             onClick = {
-                viewModel.signOut()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.main_blue)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(
-                text = "로그아웃 테스트",
-                color = Color.White,
-                fontFamily = Pretendard,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
-
-        Button(
-            onClick = {
                 viewModel.signIn(context = context)
             },
             enabled = id.isNotEmpty() && password.isNotEmpty(),
@@ -266,6 +251,6 @@ fun SignIn(viewModel: SignInViewModel = viewModel()) {
 @Composable
 fun SignInPreview() {
     MoidaTheme {
-        SignIn()
+        SignIn(navController = rememberNavController())
     }
 }

@@ -48,42 +48,51 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         bottomBar = {
-                            NavigationBar(
-                                containerColor = colorResource(id = R.color.white),
-                                tonalElevation = 10.dp
+                            if (currentRoute !in listOf(
+                                    "launchPage",
+                                    "signIn",
+                                    "joinMembership"
+                                )
                             ) {
-                                BottomNavigationItem().bottomNavigationItems().forEachIndexed { _, item ->
-                                    NavigationBarItem(
-                                        selected = item.route == currentRoute,
-                                        label = {
-                                            Text(
-                                                text = stringResource(item.label),
-                                                fontFamily = Pretendard,
-                                                fontWeight = FontWeight.Medium,
-                                                fontSize = 12.sp
-                                            )},
-                                        onClick = {
-                                            navController.navigate(item.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        },
-                                        icon = {
-                                            Icon(
-                                                painterResource(id = item.icon),
-                                                contentDescription = item.label.toString()
+                                NavigationBar(
+                                    containerColor = colorResource(id = R.color.white),
+                                    tonalElevation = 10.dp
+                                ) {
+                                    BottomNavigationItem().bottomNavigationItems()
+                                        .forEachIndexed { _, item ->
+                                            NavigationBarItem(
+                                                selected = item.route == currentRoute,
+                                                label = {
+                                                    Text(
+                                                        text = stringResource(item.label),
+                                                        fontFamily = Pretendard,
+                                                        fontWeight = FontWeight.Medium,
+                                                        fontSize = 12.sp
+                                                    )
+                                                },
+                                                onClick = {
+                                                    navController.navigate(item.route) {
+                                                        popUpTo(navController.graph.findStartDestination().id) {
+                                                            saveState = true
+                                                        }
+                                                        launchSingleTop = true
+                                                        restoreState = true
+                                                    }
+                                                },
+                                                icon = {
+                                                    Icon(
+                                                        painterResource(id = item.icon),
+                                                        contentDescription = item.label.toString()
+                                                    )
+                                                },
+                                                colors = NavigationBarItemDefaults.colors(
+                                                    selectedIconColor = colorResource(id = R.color.main_blue),
+                                                    unselectedIconColor = colorResource(id = R.color.disabled),
+                                                    selectedTextColor = colorResource(id = R.color.main_blue),
+                                                    unselectedTextColor = colorResource(id = R.color.disabled)
+                                                )
                                             )
-                                        },
-                                        colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = colorResource(id = R.color.main_blue),
-                                            unselectedIconColor = colorResource(id = R.color.disabled),
-                                            selectedTextColor = colorResource(id = R.color.main_blue),
-                                            unselectedTextColor = colorResource(id = R.color.disabled)
-                                        )
-                                    )
+                                        }
                                 }
                             }
                         }
@@ -95,6 +104,8 @@ class MainActivity : ComponentActivity() {
                     }
 
 //                    MainHome()
+//                    SignIn()
+//                    JoinMembership()
                 }
             }
         }

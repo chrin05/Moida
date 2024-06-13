@@ -9,11 +9,14 @@ import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.screen.CreateGroupSchedule
 import com.example.moida.screen.CreateMySchedule
+import com.example.moida.screen.JoinMembership
 import com.example.moida.screen.MainHome
 import com.example.moida.screen.MyPage
 import com.example.moida.screen.ScheduleDetail
 import com.example.moida.screen.TimeInput
+import com.example.moida.screen.SignIn
 import com.example.moida.screen.TimeSheet
+import com.example.moida.screen.LaunchPage
 
 sealed class BottomNavItem(val title: Int, val icon: Int, var route: String) {
     data object Home : BottomNavItem(R.string.home, R.drawable.home, "home")
@@ -27,12 +30,14 @@ sealed class Routes(val route: String) {
     data object ScheduleDetail : Routes("scheduleDetail")
     data object TimeSheet : Routes("timeSheet")
     data object TimeInput : Routes("timeInput")
-
+    data object SignIn : Routes("signIn")
+    data object JoinMembership : Routes("joinMembership")
+    data object LaunchPage : Routes("launchPage")
 }
 
 @Composable
 fun NavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = BottomNavItem.Home.route) {
+    NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
         composable(BottomNavItem.Home.route) {
             MainHome(navController)
         }
@@ -74,6 +79,18 @@ fun NavGraph(navController: NavHostController) {
         composable(
             route = Routes.TimeInput.route) {
             TimeInput(navController)
+        }
+
+        composable(Routes.LaunchPage.route) {
+            LaunchPage(navController)
+        }
+
+        composable(Routes.SignIn.route) {
+            SignIn(navController)
+        }
+
+        composable(Routes.JoinMembership.route) {
+            JoinMembership(navController)
         }
     }
 }
