@@ -247,7 +247,6 @@ fun TimeBlockGroup( //화면에 대한 타임블록
 
 @Composable
 fun TimeBlockInput(
-    page: Int,
 ) {
     val boxCount = 24
     var coloredBoxes by remember { mutableStateOf(List(boxCount) { false }) }
@@ -304,6 +303,28 @@ fun TimeBlockInput(
                             }
                         }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun TimeBlockInputGroup( //화면에 대한 타임블록
+    page: Int,
+    startDate: String
+) {
+    Row(
+        modifier = Modifier
+            .width(250.dp)
+            .padding(top = 13.dp, start = 10.dp)
+    ) {
+        if (page == 3) {
+            //서버로부터 해당 날에 대한 타임라인 받아옴
+            TimeBlockInput()
+        } else {
+            for (i in 1..3) {
+                //서버로부터 해당 날에 대한 타임라인 받아옴
+                TimeBlockInput()
             }
         }
     }

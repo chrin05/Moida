@@ -43,7 +43,6 @@ fun BottomBtn(
                 if (value.isNullOrEmpty()) {
                     navController.navigate(route)
                 } else { //name값이 올때
-                    Log.i("chrin", "bottombtn: name : $value")
                     navController.navigate("$route?title=$value")
                 }
             } else { }
