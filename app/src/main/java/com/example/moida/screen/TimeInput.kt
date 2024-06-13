@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import androidx.collection.mutableIntListOf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +28,7 @@ import com.example.moida.component.NumberSection
 import com.example.moida.component.ShowTimeLine
 import com.example.moida.component.TimeBlock
 import com.example.moida.component.TimeBlockGroup
+import com.example.moida.component.TimeBlockInputGroup
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
 import java.time.DayOfWeek
@@ -33,23 +36,22 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun TimeSheet(
+fun TimeInput(
     navController: NavHostController,
-    title: String
 ) {
     var page by remember { mutableIntStateOf(1) }
     var startDate by remember { mutableStateOf("2024.04.04") }
     var startDay by remember { mutableStateOf(getDayofWeek(startDate)) }
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-    val timeList = intArrayOf(0,0,1,1,2,2,3,3,4,4,5,5,0,0,1,1,2,2,3,3,4,4,5,5)
+    //val timeList by remember { mutableStateListOf<Int>(0) }
     val memberCount = 5
 
     Column {
         //제목부분
         TitleWithXBtn(
             navController = navController,
-            route = Routes.CreateGroupSchedule.route,
-            title = title,
+            route = Routes.TimeSheet.route,
+            title = "내 시간 입력하기",
             rightBtn = false
         )
         //날짜부분
@@ -105,35 +107,23 @@ fun TimeSheet(
             //시간대
             ShowTimeLine()
             //시간화면보여줌
-            TimeBlockGroup(page = page, memberCount = memberCount, startDate = startDate)
-            //우측 인원수 박스 : 모임인원수 넘겨줌 => 변경 필요
-            NumberSection(memberCount = 2)
+            TimeBlockInputGroup(page = page, startDate = startDate)
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
+        var activate = true
         //버튼 입력
         Box(modifier = Modifier
             .padding(horizontal = 24.dp)) {
             BottomBtn(
                 navController = navController,
-                route = Routes.TimeInput.route,
+                route = Routes.TimeSheet.route,
                 value = "",
-                btnName = "내 시간 입력하기",
-                activate = true
+                btnName = "저장",
+                activate = activate
             )
         }
     }
 }
-
-fun getDayofWeek(startDate: String): DayOfWeek {
-    // 날짜 문자열을 파싱하기 위한 포맷터 정의
-    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-    // LocalDate 객체로 변환
-    val date = LocalDate.parse(startDate, formatter)
-
-    return date.dayOfWeek
-}
-
 
 

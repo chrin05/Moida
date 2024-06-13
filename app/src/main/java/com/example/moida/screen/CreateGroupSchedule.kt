@@ -1,13 +1,17 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,9 +23,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.BottomBtn
@@ -83,14 +89,15 @@ fun CreateGroupSchedule(navController: NavHostController) {
 
             //activate = name.isNotEmpty() //activate 다시 건들이기
             activate = name.isNotEmpty()
+            Log.i("chrin", "CreateGroupSchedule: name = $name")
 
             BottomBtn(
                 navController = navController,
                 route = Routes.TimeSheet.route,
+                value = name,
                 btnName = "만들기",
                 activate = true
             )
         }
     }
 }
-

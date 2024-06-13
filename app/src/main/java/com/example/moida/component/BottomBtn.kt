@@ -1,5 +1,6 @@
 package com.example.moida.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,17 +30,22 @@ import org.checkerframework.common.subtyping.qual.Bottom
 fun BottomBtn(
     navController: NavController,
     route: String,
+    value: String,
     btnName: String,
     activate: Boolean,
-
 ) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp),
         onClick = {
-            if (activate) navController.navigate(route)
-            else { }
+            if (activate)  {
+                if (value.isNullOrEmpty()) {
+                    navController.navigate(route)
+                } else { //name값이 올때
+                    navController.navigate("$route?title=$value")
+                }
+            } else { }
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = if (activate) colorResource(id = R.color.main_blue) else colorResource(
@@ -57,5 +63,4 @@ fun BottomBtn(
             textAlign = TextAlign.Center,
             )
     }
-
 }
