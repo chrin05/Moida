@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.moida.screen.SignInViewModel
+import javax.inject.Inject
 
 class SharedPreferencesHelper(context: Context) {
 
@@ -14,6 +15,7 @@ class SharedPreferencesHelper(context: Context) {
     companion object {
         private const val KEY_EMAIL = "email"
         private const val KEY_PASSWORD = "password"
+        private const val KEY_USERNAME = "username"
     }
 
     fun saveLoginDetails(email: String, password: String) {
@@ -32,21 +34,23 @@ class SharedPreferencesHelper(context: Context) {
         return prefs.getString(KEY_PASSWORD, null)
     }
 
+    fun saveUsername(username: String) {
+        prefs.edit().apply {
+            putString(KEY_USERNAME, username)
+            apply()
+        }
+    }
+
+    fun getUsername(): String? {
+        return prefs.getString(KEY_USERNAME, null)
+    }
+
     fun clearLoginDetails() {
         prefs.edit().apply {
             remove(KEY_EMAIL)
             remove(KEY_PASSWORD)
-            apply()
+            remove(KEY_USERNAME)
+            commit()
         }
-    }
-}
-
-class SignInViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SignInViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SignInViewModel() as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

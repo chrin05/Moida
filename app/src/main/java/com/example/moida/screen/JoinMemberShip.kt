@@ -26,12 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
+import com.example.moida.model.Routes
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun JoinMembership(viewModel: JoinMembershipViewModel = viewModel()) {
+fun JoinMembership(navController: NavHostController, viewModel: JoinMembershipViewModel = viewModel()) {
     val id by viewModel.id.collectAsState()
     val password by viewModel.password.collectAsState()
     val name by viewModel.name.collectAsState()
@@ -41,10 +45,21 @@ fun JoinMembership(viewModel: JoinMembershipViewModel = viewModel()) {
     var isIdFocused by remember { mutableStateOf(false) }
     var isPasswordFocused by remember { mutableStateOf(false) }
     var isNameFocused by remember { mutableStateOf(false) }
+    val signUpSuccess by viewModel.signUpSuccess.collectAsState()
 
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(signUpSuccess) {
+        if (signUpSuccess) {
+            navController.navigate(Routes.SignIn.route) {
+                popUpTo(Routes.LaunchPage.route) {
+                    inclusive = true
+                }
+            }
         }
     }
 
@@ -57,7 +72,11 @@ fun JoinMembership(viewModel: JoinMembershipViewModel = viewModel()) {
                 .padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* 전 화면으로 돌아가기 */ },
+            IconButton(onClick = {navController.navigate(Routes.LaunchPage.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }},
                 modifier = Modifier.weight(1f)) {
                 Icon(
                     painter = painterResource(id = R.drawable.chevron_left),
@@ -277,6 +296,6 @@ fun JoinMembership(viewModel: JoinMembershipViewModel = viewModel()) {
 @Composable
 fun JoinMembershipPreview() {
     MoidaTheme {
-        JoinMembership()
+        JoinMembership(navController = rememberNavController())
     }
 }
