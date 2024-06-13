@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.moida.component.HomeTitle
 import com.example.moida.component.MainCalendar
 import com.example.moida.component.TodayItem
@@ -30,6 +31,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun MainHome(
+    navController: NavHostController,
     todayViewModel: TodayViewModel = viewModel(),
     upcomingViewModel: UpcomingViewModel = viewModel(),
 ) {
@@ -49,7 +51,7 @@ fun MainHome(
     ) {
 
         item {
-            HomeTitle()
+            HomeTitle(navController)
         }
         item {
             MainCalendar(
