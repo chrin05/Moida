@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.moida.model.BottomNavigationItem
 import com.example.moida.model.NavGraph
+import com.example.moida.screen.MyGroup
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 import com.google.firebase.FirebaseApp
@@ -106,6 +107,7 @@ class MainActivity : ComponentActivity() {
 //                    MainHome()
 //                    SignIn()
 //                    JoinMembership()
+                    MyGroup()
                 }
             }
         }
