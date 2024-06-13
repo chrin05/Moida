@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,17 +20,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.moida.R
-import com.example.moida.component.DateOfTimeSheet
+import com.example.moida.component.BottomBtn
 import com.example.moida.component.HeadOfTime
-import com.example.moida.component.NumberBlock
 import com.example.moida.component.NumberSection
+import com.example.moida.component.ShowTimeLine
+import com.example.moida.component.TimeBlock
+import com.example.moida.component.TimeBlockGroup
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun TimeSheet(
@@ -40,14 +41,19 @@ fun TimeSheet(
     var startDate by remember { mutableStateOf("2024.04.04") }
     var startDay by remember { mutableStateOf(getDayofWeek(startDate)) }
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    val timeList = intArrayOf(0,0,1,1,2,2,3,3,4,4,5,5,0,0,1,1,2,2,3,3,4,4,5,5)
+    val memberCount = 5
 
     Column {
+        Box {
+
+        }
         //제목부분
         TitleWithXBtn(
             navController = navController,
             route = Routes.CreateGroupSchedule.route,
             title = title,
-            rightBtn = true
+            rightBtn = false
         )
         //날짜부분
         Row(
@@ -63,6 +69,7 @@ fun TimeSheet(
                     contentDescription = "왼쪽버튼",
                     modifier = Modifier
                         .size(16.dp)
+                        .padding(end = 4.dp)
                         .clickable {
                             page -= 1
                             val date = LocalDate.parse(startDate, formatter)
@@ -81,6 +88,7 @@ fun TimeSheet(
                     contentDescription = "오른쪽버튼",
                     modifier = Modifier
                         .size(16.dp)
+                        .padding(start = 4.dp)
                         .clickable {
                             page += 1
                             val date = LocalDate.parse(startDate, formatter)
@@ -92,11 +100,32 @@ fun TimeSheet(
             }
         }
 
-        
+        //시간테이블 부분
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            //시간대
+            ShowTimeLine()
+            //시간화면보여줌
+            TimeBlockGroup(page = page, memberCount = memberCount, startDate = startDate)
+            //우측 인원수 박스 : 모임인원수 넘겨줌 => 변경 필요
+            NumberSection(memberCount = 2)
+        }
 
+        Spacer(modifier = Modifier.weight(1f))
 
-        //우측 인원수 박스 : 모임인원수 넘겨줌 => 변경 필요
-        NumberSection(participants = 2)
+        //버튼 입력
+        Box(modifier = Modifier
+            .padding(horizontal = 24.dp)) {
+            BottomBtn(
+                navController = navController,
+                route = Routes.CreateGroupSchedule.route,
+                value = "",
+                btnName = "내 시간 입력하기",
+                activate = true
+            )
+        }
     }
 }
 
