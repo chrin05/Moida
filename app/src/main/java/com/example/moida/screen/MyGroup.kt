@@ -24,6 +24,8 @@ fun MyGroup(
     val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
     var showJoinDialog by remember { mutableStateOf(false) }
+    var showJoinError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
     var meetings by remember { mutableStateOf(listOf<Meeting>()) }
     var isFabMenuExpanded by remember { mutableStateOf(false) }
 
@@ -54,26 +56,48 @@ fun MyGroup(
         meetings = meetings,
         isFabMenuExpanded = isFabMenuExpanded,
         onFabMenuToggle = { isFabMenuExpanded = !isFabMenuExpanded },
-        onJoinMeeting = { showJoinDialog = true }
+        onJoinMeeting = {
+            showJoinDialog = true
+            showJoinError = false // Reset error state when opening dialog
+        }
     )
 
-    if (showJoinDialog) {
+    if (showJoinDialog || showJoinError) {
         JoinMeetingScreen(
-            onDismiss = { showJoinDialog = false },
+            onDismiss = {
+                showJoinDialog = false
+                showJoinError = false
+            },
             onJoin = { inviteCode ->
                 database.child("groups").orderByChild("code").equalTo(inviteCode)
                     .get().addOnSuccessListener {
                         if (it.exists()) {
                             val group = it.children.first().getValue(Meeting::class.java)
                             group?.let { meeting ->
+                                val userEmail = currentUser?.email
+                                if (userEmail != null && !meeting.members.any { it["memberEmail"] == userEmail }) {
+                                    val updatedMeeting = meeting.copy(
+                                        members = meeting.members + mapOf("memberEmail" to userEmail)
+                                    )
+                                    val meetingKey = it.children.first().key
+                                    if (meetingKey != null) {
+                                        database.child("groups").child(meetingKey).setValue(updatedMeeting)
+                                    }
+                                }
                                 meetings = meetings + meeting
+                                showJoinDialog = false
+                                showJoinError = false
                             }
                         } else {
-                            // 유효하지 않은 초대코드 예외처리
+                            errorMessage = "유효하지 않은 초대코드입니다."
+                            showJoinError = true
                         }
-                        showJoinDialog = false
+                    }.addOnFailureListener {
+                        Log.e("MyGroup", "Error getting data", it)
                     }
-            }
+            },
+            errorMessage = errorMessage,
+            showError = showJoinError
         )
     }
 }

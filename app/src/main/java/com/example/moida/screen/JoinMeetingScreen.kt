@@ -26,15 +26,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.moida.R
 
@@ -42,12 +43,12 @@ import com.example.moida.R
 @Composable
 fun JoinMeetingScreen(
     onDismiss: () -> Unit,
-    onJoin: (String) -> Unit
+    onJoin: (String) -> Unit,
+    errorMessage: String,
+    showError: Boolean
 ) {
-    var inviteCode by remember { mutableStateOf(TextFieldValue("")) }
-    var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-    val isJoinEnabled = inviteCode.text.isNotBlank()
+    var inviteCode by remember { mutableStateOf("") }
+    val isJoinEnabled = inviteCode.isNotBlank()
 
     Dialog(onDismissRequest = onDismiss) {
         Box(
@@ -81,7 +82,6 @@ fun JoinMeetingScreen(
                         value = inviteCode,
                         onValueChange = {
                             inviteCode = it
-                            if (showError) showError = false
                         },
                         label = { Text("초대코드 입력") },
                         singleLine = true,
@@ -96,21 +96,26 @@ fun JoinMeetingScreen(
                         )
                     )
                     if (showError) {
-                        Text(
-                            text = errorMessage,
-                            color = Color.Red,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(top = 8.dp)
-                        )
+                        ) {
+                            Icon(
+                                painter = painterResource(id =R.drawable.baseline_warning_24),
+                                contentDescription = "Warning",
+                                tint = Color.Red,
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                            Text(
+                                text = errorMessage,
+                                color = Color.Red,
+                                fontSize = 12.sp
+                            )
+                        }
                     }
                     Button(
                         onClick = {
-                            if (inviteCode.text.isBlank()) {
-                                showError = true
-                                errorMessage = "초대 코드를 입력해주세요."
-                            } else {
-                                showError = false
-                                onJoin(inviteCode.text)
-                            }
+                            onJoin(inviteCode)
                         },
                         enabled = isJoinEnabled,
                         colors = ButtonDefaults.buttonColors(

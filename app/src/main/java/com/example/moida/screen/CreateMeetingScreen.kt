@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moida.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.moida.model.Meeting
 
@@ -36,6 +38,7 @@ fun CreateMeetingScreen(
     onCreate: (Meeting) -> Unit
 ) {
     var groupName by remember { mutableStateOf("") }
+    val database = FirebaseDatabase.getInstance().reference
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
@@ -68,8 +71,22 @@ fun CreateMeetingScreen(
                                         )
                                     )
                                 )
-                                onCreate(meeting)
+                                // Firebase Realtime Database에 데이터 저장
+                                database.child("groups").push().setValue(meeting)
+                                    .addOnSuccessListener {
+                                        // 데이터베이스에 저장 성공 시 호출되는 부분
+                                        onCreate(meeting)
+                                        Log.d("CreateMeetingScreen", "Meeting saved to Firebase: $meeting")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        // 데이터베이스에 저장 실패 시 호출되는 부분
+                                        Log.e("CreateMeetingScreen", "Error saving meeting to Firebase", e)
+                                    }
                             }
+                        }
+                        .addOnFailureListener { e ->
+                            // Firestore에서 사용자 데이터 가져오기 실패 시 호출되는 부분
+                            Log.e("CreateMeetingScreen", "Error fetching user data", e)
                         }
                 }
             }) {
