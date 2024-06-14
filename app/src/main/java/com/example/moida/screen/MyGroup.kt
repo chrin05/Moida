@@ -5,12 +5,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.Meeting
 import com.google.firebase.database.FirebaseDatabase
 
 @Composable
-fun MyGroup() {
+fun MyGroup(
+    navController: NavHostController
+) {
     val database = FirebaseDatabase.getInstance().reference
     var showCreateDialog: Boolean by remember { mutableStateOf(false) }
     var showJoinDialog by remember { mutableStateOf(false) }
