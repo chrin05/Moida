@@ -1,6 +1,8 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -8,42 +10,52 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.Meeting
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 @Composable
 fun MyGroup(
     navController: NavHostController
 ) {
     val database = FirebaseDatabase.getInstance().reference
-    var showCreateDialog: Boolean by remember { mutableStateOf(false) }
+    val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser
     var showJoinDialog by remember { mutableStateOf(false) }
     var meetings by remember { mutableStateOf(listOf<Meeting>()) }
     var isFabMenuExpanded by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        if (currentUser != null) {
+            val userEmail = currentUser.email
+            val meetingsListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val meetingList = mutableListOf<Meeting>()
+                    for (meetingSnapshot in dataSnapshot.children) {
+                        val meeting = meetingSnapshot.getValue(Meeting::class.java)
+                        if (meeting != null && meeting.members.any { it["memberEmail"] == userEmail }) {
+                            meetingList.add(meeting)
+                        }
+                    }
+                    meetings = meetingList
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("MyGroup", "Database error: ${databaseError.message}")
+                }
+            }
+            database.child("groups").addValueEventListener(meetingsListener)
+        }
+    }
+
     MyMeetingsScreen(
+        navController = navController,
         meetings = meetings,
         isFabMenuExpanded = isFabMenuExpanded,
         onFabMenuToggle = { isFabMenuExpanded = !isFabMenuExpanded },
-        onCreateMeeting = { showCreateDialog = true },
         onJoinMeeting = { showJoinDialog = true }
     )
-
-    if (showCreateDialog) {
-        CreateMeetingScreen(
-            onDismiss = { showCreateDialog = false },
-            onCreate = { groupName ->
-                val uniqueCode = generateUniqueCode()
-                val randomImageRes = getRandomImageRes()
-                val group = Meeting(name = groupName, imageRes = randomImageRes, code = uniqueCode)
-                database.child("groups").push().setValue(group).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        meetings = meetings + group
-                    }
-                    showCreateDialog = false
-                }
-            }
-        )
-    }
 
     if (showJoinDialog) {
         JoinMeetingScreen(
