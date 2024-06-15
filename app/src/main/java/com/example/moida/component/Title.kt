@@ -28,7 +28,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -179,10 +178,9 @@ fun HomeTitle(
 }
 
 @Composable
-fun GroupDetailTitle(group: GroupInfo) {
+fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Box {
             Image(
@@ -218,7 +216,10 @@ fun GroupDetailTitle(group: GroupInfo) {
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(Color.White.copy(alpha = 0.5f))
-                        .padding(start = 6.dp, top = 8.dp, bottom = 8.dp, end = 10.dp),
+                        .padding(all = 6.dp)
+                        .clickable {
+                            onMenuClick()
+                        },
                     tint = colorResource(id = R.color.text_high)
                 )
             }
