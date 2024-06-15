@@ -37,16 +37,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.Meeting
+import com.example.moida.model.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyMeetingsScreen(
+    navController: NavHostController,
     meetings: List<Meeting>,
     isFabMenuExpanded: Boolean,
     onFabMenuToggle: () -> Unit,
-    onCreateMeeting: () -> Unit,
     onJoinMeeting: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -109,7 +111,7 @@ fun MyMeetingsScreen(
                     FloatingActionButton(
                         onClick = {
                             onFabMenuToggle()
-                            onCreateMeeting()
+                            navController.navigate(Routes.CreateMeeting.route)
                         },
                         shape = CircleShape,
                         containerColor = colorResource(id = R.color.white)
@@ -139,7 +141,7 @@ fun MyMeetingsScreen(
                     }
                 }
             }
-            // Close button placed above the dark background
+
             FloatingActionButton(
                 onClick = { onFabMenuToggle() },
                 shape = CircleShape,
@@ -155,6 +157,8 @@ fun MyMeetingsScreen(
                     tint = colorResource(id = R.color.white)
                 )
             }
+
+
         }
     }
 }
