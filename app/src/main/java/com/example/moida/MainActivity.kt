@@ -1,5 +1,6 @@
 package com.example.moida
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.moida.model.BottomNavigationItem
 import com.example.moida.model.NavGraph
+import com.example.moida.model.schedule.NewScheduleViewModel
 import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 import com.google.firebase.FirebaseApp
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val newScheduleViewModel = NewScheduleViewModel(application = Application())
                     val currentRoute = navBackStackEntry?.destination?.route
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
@@ -100,7 +103,9 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Box(
                             modifier = Modifier.padding(it)) {
-                            NavGraph(navController = navController)
+                            NavGraph(
+                                navController = navController,
+                            )
                         }
                     }
                 }

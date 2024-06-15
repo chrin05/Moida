@@ -47,9 +47,9 @@ fun CreateMySchedule(
         ) {
             NameTextField(title = "일정 이름", onValueChange = { name = it })
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            DateField(title = "일정 날짜", onValueChange = { date = it })
+            DateField(navController, title = "일정 날짜", onValueChange = { date = it })
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            TimeField(title = "일정 시간", onValueChange = { time = it })
+            TimeField(navController, title = "일정 시간", onValueChange = { time = it })
         }
     }
 }

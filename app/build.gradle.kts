@@ -75,6 +75,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.0-beta02")
     implementation("androidx.compose.ui:ui:1.7.0-beta02")
     implementation("com.google.firebase:firebase-analytics:22.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
     implementation("androidx.wear.compose:compose-material:1.3.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

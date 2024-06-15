@@ -101,7 +101,7 @@ fun JoinMeetingScreen(
                             modifier = Modifier.padding(top = 8.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id =R.drawable.baseline_warning_24),
+                                painter = painterResource(id =R.drawable.ic_error),
                                 contentDescription = "Warning",
                                 tint = Color.Red,
                                 modifier = Modifier.padding(end = 4.dp)
