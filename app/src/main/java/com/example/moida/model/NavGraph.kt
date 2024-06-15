@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
+import com.example.moida.model.schedule.NewScheduleViewModel
 import com.example.moida.screen.CreateGroupSchedule
 import com.example.moida.screen.CreateMySchedule
 import com.example.moida.screen.JoinMembership
@@ -38,7 +39,10 @@ sealed class Routes(val route: String) {
 }
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(
+    navController: NavHostController,
+    newScheduleViewModel: NewScheduleViewModel,
+) {
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
         composable(BottomNavItem.Home.route) {
             MainHome(navController)
@@ -63,17 +67,18 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(
-            route = Routes.TimeSheet.route + "?title={title}",
+            route = Routes.TimeSheet.route + "?scheduleId={scheduleId}",
             arguments = listOf(
-                navArgument("title") {
-                    type = NavType.StringType
+                navArgument("scheduleId") {
+                    type = NavType.IntType
                 }
             )
         ) {
-            it.arguments?.getString("title")?.let { it1 ->
+            it.arguments?.getInt("scheduleId")?.let { it1 ->
                 TimeSheet(
                     navController,
-                    title = it1,
+                    newScheduleViewModel,
+                    scheduleId = it1,
                 )
             }
         }

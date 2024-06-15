@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.moida.R
@@ -37,10 +38,14 @@ import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
 import com.example.moida.model.Routes
+import com.example.moida.model.schedule.NewScheduleViewModel
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun CreateGroupSchedule(navController: NavHostController) {
+fun CreateGroupSchedule(
+    navController: NavHostController,
+    newScheduleViewModel: NewScheduleViewModel = viewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +67,9 @@ fun CreateGroupSchedule(navController: NavHostController) {
                 .padding(start = 24.dp, top = 40.dp, end = 24.dp)
         ) {
             NameTextField(title = "일정 이름", onValueChange = { name = it })
+
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
+
             DateField(navController, title = "일정 기간 - 시작일", onValueChange = { date = it })
 
             Row(
@@ -89,15 +96,34 @@ fun CreateGroupSchedule(navController: NavHostController) {
 
             //activate = name.isNotEmpty() //activate 다시 건들이기
             activate = name.isNotEmpty()
-            Log.i("chrin", "CreateGroupSchedule: name = $name")
 
-            BottomBtn(
-                navController = navController,
-                route = Routes.TimeSheet.route,
-                value = name,
-                btnName = "만들기",
-                activate = true
-            )
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                onClick = {
+                    if (activate)  {
+                        newScheduleViewModel.addSchedule(name, date)
+                        val scheduleId = newScheduleViewModel.getLastId()
+                        navController.navigate("${Routes.TimeSheet.route}?scheduleId=$scheduleId")
+                    } else { }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (activate) colorResource(id = R.color.main_blue) else colorResource(
+                        id = R.color.disabled
+                    ),
+                )
+            ) {
+                Text(
+                    text = "만들기",
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = Pretendard,
+                    fontWeight = FontWeight(500),
+                    color = colorResource(id = R.color.white),
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }

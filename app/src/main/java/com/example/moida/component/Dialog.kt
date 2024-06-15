@@ -28,11 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
 fun CustomDialog(
+    navController: NavController,
     mainTitle: String,
     content: String,
     leftBtn: String,
@@ -100,7 +103,9 @@ fun CustomDialog(
                         .height(IntrinsicSize.Min) // Row의 높이를 내부 컴포넌트에 맞춤
                 ) {
                     Button(
-                        onClick = { onClickLeft() },
+                        onClick = {
+                                  navController.popBackStack()
+                                  },
                         shape = RectangleShape,
                         modifier = Modifier
                             .weight(1f)
@@ -156,19 +161,4 @@ fun CustomDialog(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun Preview() {
-    CustomDialog(
-        mainTitle = "약속을 확정하겠습니까?",
-        content = "약속 확정을 원하시면 누르세요",
-        leftBtn = "취소",
-        rightBtn = "확인",
-        onClickLeft = {  }
-    ) {
-        
-    }
-    
 }
