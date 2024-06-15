@@ -36,13 +36,8 @@ import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewModel()) {
+fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(LocalContext.current))) {
     val context = LocalContext.current
-
-    // 초기화 메서드 호출
-    LaunchedEffect(viewModel) {
-        viewModel.initialize(context)
-    }
 
     val id by viewModel.id.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -221,7 +216,7 @@ fun SignIn(navController: NavHostController, viewModel: SignInViewModel = viewMo
 
         Button(
             onClick = {
-                viewModel.signIn(context = context)
+                viewModel.signIn()
             },
             enabled = id.isNotEmpty() && password.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(

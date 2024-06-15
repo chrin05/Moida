@@ -36,14 +36,11 @@ import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
-fun LaunchPage(navController: NavHostController, viewModel: SignInViewModel = viewModel()) {
+fun LaunchPage(navController: NavHostController) {
     val context = LocalContext.current
+    val viewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
 
     // 자동 로그인 확인
-    LaunchedEffect(Unit) {
-        viewModel.initialize(context)
-    }
-
     val id by viewModel.userName.collectAsState()
     LaunchedEffect(id) {
         if (id != null) {

@@ -51,7 +51,8 @@ class MainActivity : ComponentActivity() {
                             if (currentRoute !in listOf(
                                     "launchPage",
                                     "signIn",
-                                    "joinMembership"
+                                    "joinMembership",
+                                    "ResignMemberShip"
                                 )
                             ) {
                                 NavigationBar(

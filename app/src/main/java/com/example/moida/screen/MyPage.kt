@@ -22,8 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,13 +34,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.moida.R
 import com.example.moida.model.Routes
+import com.example.moida.ui.theme.MoidaTheme
 import com.example.moida.ui.theme.Pretendard
 import com.example.moida.util.SharedPreferencesHelper
 import kotlinx.coroutines.launch
@@ -46,10 +51,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyPage(navController: NavHostController) {
     val context = LocalContext.current
-    val viewModel: SignInViewModel = viewModel()
-    val prefsHelper = remember { SharedPreferencesHelper(context) }
-    val userName = prefsHelper.getUsername()
+    val viewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
+    val userName by viewModel.userName.collectAsState()
     val scope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         Modifier.background(Color.White)
@@ -94,7 +99,16 @@ fun MyPage(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 16.dp, top = 22.dp, bottom = 22.dp),
+                .padding(start = 24.dp, end = 16.dp, top = 22.dp, bottom = 22.dp)
+                .clickable {
+                    navController.navigate(Routes.Myinfor.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -180,7 +194,10 @@ fun MyPage(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 16.dp, top = 22.dp, bottom = 24.dp),
+                .padding(start = 24.dp, end = 16.dp, top = 22.dp, bottom = 24.dp)
+                .clickable {
+                    showDialog = true
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -189,10 +206,19 @@ fun MyPage(navController: NavHostController) {
                 fontFamily = Pretendard,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                color = colorResource(id = R.color.text_high) ,
-                modifier = Modifier.clickable {
+                color = colorResource(id = R.color.text_high)
+            )
+        }
+        if (showDialog) {
+            CustomAlertDialog(
+                title = "로그아웃 하시겠습니까?",
+                message = "",
+                confirmButtonText = "로그아웃",
+                dismissButtonText = "취소",
+                onDismiss = { showDialog = false },
+                onConfirm = {
+                    showDialog = false
                     scope.launch {
-                        viewModel.initialize(context)
                         viewModel.signOut()
                         // 네비게이션 스택을 초기화하고 LaunchPage로 이동
                         navController.navigate(Routes.LaunchPage.route) {
@@ -202,5 +228,13 @@ fun MyPage(navController: NavHostController) {
                 }
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MyPage() {
+    MoidaTheme {
+        MyPage(navController = rememberNavController())
     }
 }

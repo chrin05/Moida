@@ -65,6 +65,7 @@ fun FieldTitle(
 fun NameTextField(
     title: String,
     onValueChange: (String) -> Unit,
+    placeHolderString: String = "일정 이름 입력"
 ) {
     Column(
         modifier = Modifier
@@ -87,7 +88,8 @@ fun NameTextField(
                 onValueChange = {
                     name = it
                     onValueChange(name)
-                }
+                },
+                placeHolderString = placeHolderString
             )
             if (name.isNotEmpty()) {
                 Image(
