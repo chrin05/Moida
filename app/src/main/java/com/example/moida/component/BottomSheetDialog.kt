@@ -1,8 +1,10 @@
 package com.example.moida.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
@@ -72,14 +74,65 @@ fun CalendarBottomSheetDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerBottomSheetDialog(
+    onDismiss: () -> Unit
+) {
+    val modalBottomSheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = modalBottomSheetState,
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        containerColor = colorResource(id = R.color.white),
+        dragHandle = { BottomSheetDefaults.DragHandle()},
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(340.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 30.dp)
+                .padding(bottom = 30.dp)
+                .fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                TimePicker()
+            }
+
+            Button(
+                onClick = { },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (true) {
+                        colorResource(id = R.color.main_blue)
+                    } else colorResource(id = R.color.gray_200)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    text = "적용하기",
+                    color = Color.White,
+                    fontFamily = Pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
+                )
+            }
+        }
+    }
+}
+
 
 @Preview
 @Composable
 fun PreviewBottomSheetDialog(){
-
     Column(modifier = Modifier.fillMaxSize()) {
-        CalendarBottomSheetDialog(onDismiss = {})
+//        CalendarBottomSheetDialog(onDismiss = {})
+        TimePickerBottomSheetDialog(onDismiss = {})
 
     }
-
 }
