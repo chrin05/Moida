@@ -3,22 +3,16 @@ package com.example.moida.component
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,12 +30,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.model.Routes
 import com.example.moida.ui.theme.Pretendard
 
 
@@ -174,6 +167,7 @@ fun InputEditText(
 
 @Composable
 fun DateField(
+    navController: NavHostController,
     title: String,
     onValueChange: (String) -> Unit,
 ) {
@@ -210,11 +204,13 @@ fun DateField(
             }
             Image(
                 painter = painterResource(id = R.drawable.ic_calendar),
-                contentDescription = "모두지우기",
+                contentDescription = "달력이미지",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(16.dp)
-                    .clickable { }
+                    .clickable {
+                        navController.navigate(Routes.CalendarBottomSheet.route)
+                    }
             )
         }
         Canvas(
@@ -234,6 +230,7 @@ fun DateField(
 
 @Composable
 fun TimeField(
+    navController: NavHostController,
     title: String,
     onValueChange: (String) -> Unit
 ) {
@@ -271,7 +268,9 @@ fun TimeField(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(16.dp)
-                .clickable { }
+                .clickable {
+
+                }
         )
     }
     Canvas(
