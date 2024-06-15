@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.BottomBtn
@@ -28,6 +29,7 @@ import com.example.moida.component.TimeBlock
 import com.example.moida.component.TimeBlockGroup
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
+import com.example.moida.model.schedule.NewScheduleViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +37,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TimeSheet(
     navController: NavHostController,
-    title: String
+    newScheduleViewModel: NewScheduleViewModel = viewModel(),
+    scheduleId: Int
 ) {
     var page by remember { mutableIntStateOf(1) }
     var startDate by remember { mutableStateOf("2024.04.04") }
@@ -49,7 +52,7 @@ fun TimeSheet(
         TitleWithXBtn(
             navController = navController,
             route = Routes.CreateGroupSchedule.route,
-            title = title,
+            title = newScheduleViewModel.findNameById(scheduleId),
             rightBtn = false
         )
         //날짜부분
