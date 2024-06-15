@@ -102,10 +102,6 @@ class MainActivity : ComponentActivity() {
                             NavGraph(navController = navController)
                         }
                     }
-
-//                    MainHome()
-//                    SignIn()
-//                    JoinMembership()
                 }
             }
         }
