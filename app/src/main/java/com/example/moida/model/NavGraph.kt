@@ -10,11 +10,10 @@ import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
 import com.example.moida.screen.ChangeName
 import com.example.moida.screen.ChangedName
-import com.example.moida.screen.group.CreateGroupSchedule
-import com.example.moida.screen.group.CreateMeetingScreen
+import com.example.moida.screen.CreateGroupSchedule
+import com.example.moida.screen.CreateMeetingScreen
 import com.example.moida.screen.CreateMySchedule
 import com.example.moida.screen.GroupDetail
-import com.example.moida.screen.group.GroupDetail
 import com.example.moida.screen.JoinMembership
 import com.example.moida.screen.LaunchPage
 import com.example.moida.screen.MainHome
