@@ -37,8 +37,12 @@ fun MyGroup(
                     val meetingList = mutableListOf<Meeting>()
                     for (meetingSnapshot in dataSnapshot.children) {
                         val meeting = meetingSnapshot.getValue(Meeting::class.java)
-                        if (meeting != null && meeting.members.any { it["memberEmail"] == userEmail }) {
-                            meetingList.add(meeting)
+                        val meetingId = meetingSnapshot.key // 고유 ID 가져오기
+                        if (meeting != null && meetingId != null) {
+                            if (meeting.members.any { it["memberEmail"] == userEmail }) {
+                                val meetingWithId = meeting.copy(id = meetingId) // 고유 ID를 포함하여 Meeting 객체 생성
+                                meetingList.add(meetingWithId)
+                            }
                         }
                     }
                     meetings = meetingList

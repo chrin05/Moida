@@ -1,5 +1,6 @@
 package com.example.moida.model
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,6 +26,9 @@ import com.example.moida.screen.ScheduleDetail
 import com.example.moida.screen.SignIn
 import com.example.moida.screen.TimeInput
 import com.example.moida.screen.TimeSheet
+import com.google.gson.Gson
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 sealed class BottomNavItem(val title: Int, val icon: Int, var route: String) {
     data object Home : BottomNavItem(R.string.home, R.drawable.home, "home")
@@ -53,7 +57,11 @@ sealed class Routes(val route: String) {
     data object CreateMeeting : Routes("createMeeting")
     data object CalendarBottomSheet : Routes("calendarBottomSheet")
 
-    data object GroupDetail : Routes("GroupDetail")
+    data object GroupDetail : Routes("groupDetail/{meetingJson}") {
+        fun createRoute(meetingJson: String): String {
+            return "groupDetail/$meetingJson"
+        }
+    }
 }
 
 @Composable
@@ -104,8 +112,17 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        composable(Routes.GroupDetail.route) {
-            GroupDetail(navController)
+        composable(
+            route = Routes.GroupDetail.route,
+            arguments = listOf(navArgument("meetingJson") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            val meetingJson = backStackEntry.arguments?.getString("meetingJson")
+                val gson = Gson()
+                val decodedMeetingJson = URLDecoder.decode(meetingJson, StandardCharsets.UTF_8.toString())
+                val meeting = gson.fromJson(decodedMeetingJson, Meeting::class.java)
+                GroupDetail(navController, meeting)
         }
 
         composable(
