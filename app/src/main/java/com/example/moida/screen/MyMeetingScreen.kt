@@ -179,6 +179,20 @@ fun MeetingGrid(meetings: List<Meeting>) {
 
 @Composable
 fun MeetingCard(meeting: Meeting) {
+
+    val imageResources = listOf(
+        R.drawable.sample_image1,
+        R.drawable.sample_image2,
+        R.drawable.sample_image3,
+        R.drawable.sample_image4,
+        R.drawable.sample_image5,
+        R.drawable.sample_image6,
+        R.drawable.sample_image7,
+        R.drawable.sample_image8,
+        R.drawable.sample_image9,
+        R.drawable.sample_image10
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -192,7 +206,7 @@ fun MeetingCard(meeting: Meeting) {
     ) {
         Column {
             Image(
-                painter = painterResource(id = meeting.imageRes),
+                painter = painterResource(id = imageResources[meeting.imageRes]),
                 contentDescription = meeting.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
