@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import com.example.moida.component.UpcomingItem
 import com.example.moida.component.UpcomingItemList
 import com.example.moida.model.TodayViewModel
 import com.example.moida.model.UpcomingViewModel
+import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

@@ -62,7 +62,7 @@ fun CreateMeetingScreen(
                                 val memberEmail = user.email ?: "Unknown"
                                 val meeting = Meeting(
                                     name = groupName,
-                                    imageRes = getRandomImageRes(),
+                                    imageRes = (0..9).random(),
                                     code = generateUniqueCode(),
                                     members = listOf(
                                         mapOf(
