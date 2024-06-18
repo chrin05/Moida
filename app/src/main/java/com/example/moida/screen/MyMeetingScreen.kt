@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,9 @@ import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.Meeting
 import com.example.moida.model.Routes
+import com.google.gson.Gson
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +90,7 @@ fun MyMeetingsScreen(
                     "전체", fontSize = 20.sp, fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                MeetingGrid(meetings = meetings)
+                MeetingGrid(meetings = meetings, navController = navController)
             }
         }
 
@@ -164,7 +168,7 @@ fun MyMeetingsScreen(
 }
 
 @Composable
-fun MeetingGrid(meetings: List<Meeting>) {
+fun MeetingGrid(meetings: List<Meeting>, navController: NavHostController) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(8.dp),
@@ -172,33 +176,42 @@ fun MeetingGrid(meetings: List<Meeting>) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(meetings.size) { index ->
-            MeetingCard(meeting = meetings[index])
+            MeetingCard(meeting = meetings[index], navController)
         }
     }
 }
 
+val imageResources = listOf(
+    R.drawable.sample_image1,
+    R.drawable.sample_image2,
+    R.drawable.sample_image3,
+    R.drawable.sample_image4,
+    R.drawable.sample_image5,
+    R.drawable.sample_image6,
+    R.drawable.sample_image7,
+    R.drawable.sample_image8,
+    R.drawable.sample_image9,
+    R.drawable.sample_image10
+)
 @Composable
-fun MeetingCard(meeting: Meeting) {
-
-    val imageResources = listOf(
-        R.drawable.sample_image1,
-        R.drawable.sample_image2,
-        R.drawable.sample_image3,
-        R.drawable.sample_image4,
-        R.drawable.sample_image5,
-        R.drawable.sample_image6,
-        R.drawable.sample_image7,
-        R.drawable.sample_image8,
-        R.drawable.sample_image9,
-        R.drawable.sample_image10
-    )
-
+fun MeetingCard(meeting: Meeting, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
             .clip(RectangleShape)
-            .padding(3.dp),
+            .padding(3.dp)
+            .clickable {
+                try {
+                    val gson = Gson()
+                    val meetingJson = URLEncoder.encode(gson.toJson(meeting), StandardCharsets.UTF_8.toString())
+                    val route = Routes.GroupDetail.createRoute(meetingJson)
+                    Log.d("MeetingCard", "Navigating to route: $route")
+                    navController.navigate(route)
+                } catch (e: Exception) {
+                    Log.e("MeetingCard", "Error encoding Meeting JSON", e)
+                }
+            },
         shape = RectangleShape,
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
