@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -249,44 +250,43 @@ fun TimeBlockGroup( //화면에 대한 타임블록
 fun TimeBlockInput(
 ) {
     val boxCount = 24
+    val boxHeight = 24.dp
+    val boxHeightPx = with(LocalDensity.current) { boxHeight.toPx() }
     var coloredBoxes by remember { mutableStateOf(List(boxCount) { false }) }
     val paintedBoxIndices = remember { mutableStateListOf<Int>() }
+    var lastIndex by remember { mutableStateOf(-1) }
 
-    // Box들을 표시하는 레이아웃
     Box(
         modifier = Modifier
             .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = {
-                        // 드래그 시작 시 초기화
-                    },
-                    onDrag = { change, dragAmount ->
-                        val yPosition = change.position.y
-                        val index = (yPosition / 50).toInt()
-                        if (index in 0 until 24) {
+                detectDragGestures { change, dragAmount ->
+                    val yPosition = change.position.y
+                    val index = (yPosition / boxHeightPx).toInt()
+
+                    if (index in 0 until boxCount) {
+                        // Check if the current index is different from the last processed index
+                        if (index != lastIndex) {
                             coloredBoxes = coloredBoxes.toMutableList().apply {
                                 this[index] = !this[index]
                             }
-
-                            if (index !in paintedBoxIndices) {
-                                paintedBoxIndices.add(index)
-                            } else {
+                            if (index in paintedBoxIndices) {
                                 paintedBoxIndices.remove(index)
+                            } else {
+                                paintedBoxIndices.add(index)
                             }
+                            lastIndex = index
                         }
-                    },
-                    onDragEnd = {
-                        // 드래그 종료 시 처리
                     }
-                )
+                    change.consume()
+                }
             }
     ) {
         Column {
-            for (index in 0 until 24) {
+            for (index in 0 until boxCount) {
                 val isColored = coloredBoxes[index]
                 Box(
                     modifier = Modifier
-                        .size(width = 80.dp, height = 24.dp)
+                        .size(width = 80.dp, height = boxHeight)
                         .background(
                             if (isColored) colorResource(id = R.color.blue3)
                             else colorResource(id = R.color.white)
@@ -298,7 +298,9 @@ fun TimeBlockInput(
                                 .apply {
                                     this[index] = !this[index]
                                 }
-                            if (index !in paintedBoxIndices) {
+                            if (index in paintedBoxIndices) {
+                                paintedBoxIndices.remove(index)
+                            } else {
                                 paintedBoxIndices.add(index)
                             }
                         }
@@ -307,6 +309,7 @@ fun TimeBlockInput(
         }
     }
 }
+
 
 @Composable
 fun TimeBlockInputGroup( //화면에 대한 타임블록
