@@ -105,19 +105,3 @@ fun MyGroup(
 fun generateUniqueCode(): String {
     return (100000..999999).random().toString()
 }
-
-fun getRandomImageRes(): Int {
-    val images = listOf(
-        R.drawable.sample_image1,
-        R.drawable.sample_image2,
-        R.drawable.sample_image3,
-        R.drawable.sample_image4,
-        R.drawable.sample_image5,
-        R.drawable.sample_image6,
-        R.drawable.sample_image7,
-        R.drawable.sample_image8,
-        R.drawable.sample_image9,
-        R.drawable.sample_image10
-    )
-    return images.random()
-}
