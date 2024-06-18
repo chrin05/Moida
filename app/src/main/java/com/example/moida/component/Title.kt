@@ -34,6 +34,7 @@ import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.GroupInfo
 import com.example.moida.model.Routes
+import com.example.moida.screen.imageResources
 import com.example.moida.ui.theme.Pretendard
 
 @Composable
@@ -184,7 +185,7 @@ fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
     ) {
         Box {
             Image(
-                painter = painterResource(id = group.groupImg),
+                painter = painterResource(id = imageResources[group.groupImg]),
                 contentDescription = "그룹 대표 이미지",
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,8 @@ import com.example.moida.component.GroupItem
 import com.example.moida.component.MainCalendar
 import com.example.moida.component.TodayItemList
 import com.example.moida.model.GroupDetailViewModel
+import com.example.moida.model.GroupDetailViewModelFactory
+import com.example.moida.model.Meeting
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -33,8 +36,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun GroupDetail(
     navController: NavHostController,
-    groupDetailViewModel: GroupDetailViewModel = viewModel()
+    meeting: Meeting,
 ) {
+    val groupDetailViewModel: GroupDetailViewModel = viewModel(
+        factory = GroupDetailViewModelFactory(meeting)
+    ) // 각 그룹에 들어올 때마다 넘겨받은 meeting 정보로 뷰모델을 세팅해줌
+
     val groupInfo by groupDetailViewModel.groupInfo.collectAsState()
     val itemList by groupDetailViewModel.itemList.collectAsState()
 
