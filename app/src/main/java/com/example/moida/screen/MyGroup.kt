@@ -1,7 +1,6 @@
 package com.example.moida.screen
 
 import android.util.Log
-import android.widget.ImageView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue

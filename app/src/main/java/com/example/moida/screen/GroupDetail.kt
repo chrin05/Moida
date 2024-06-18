@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.moida.component.DrawerContent
 import com.example.moida.component.GroupDetailTitle
 import com.example.moida.component.GroupItem
@@ -31,6 +32,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun GroupDetail(
+    navController: NavHostController,
     groupDetailViewModel: GroupDetailViewModel = viewModel()
 ) {
     val groupInfo by groupDetailViewModel.groupInfo.collectAsState()
