@@ -1,7 +1,11 @@
 package com.example.moida.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -9,20 +13,28 @@ import kotlinx.coroutines.launch
 class TodayViewModel() : ViewModel() {
     private val _itemList = MutableStateFlow<List<TodayItemData>>(emptyList())
     val itemList: StateFlow<List<TodayItemData>> = _itemList
+    private val database = Firebase.firestore
 
     init {
         viewModelScope.launch {
-            _itemList.value = listOf(
-                TodayItemData("2024.05.08", "11:00", "채린이랑 엽떡", "개인 일정"),
-                TodayItemData("2024.05.08", "19:00", "어버이날 가족 외식", "개인 일정"),
-                TodayItemData("2024.05.14", "18:30", "롯데 vs 키움 야구장", "개인 일정"),
-                TodayItemData("2024.05.18", "8:30", "서울신문하프마라톤", "RIKU"),
-                TodayItemData("2024.05.22", "7:00", "스쿼시 수업", "스쿼시 클럽"),
-                TodayItemData("2024.05.27", "23:00", "모프 회의", "모프 모이다"),
-                TodayItemData("2024.05.29", "7:00", "스쿼시 수업", "스쿼시 클럽"),
-                TodayItemData("2024.05.29", "12:00", "2차 스터디", "compose 스터디"),
-                TodayItemData("2024.06.01", "18:00", "동아리 회식", "개인일정")
-            )
+            database.collection("todayItems")
+                .get()
+                .addOnSuccessListener {docs ->
+                    if(!docs.isEmpty) {
+                        val items = docs.map {doc ->
+                            val item = doc.toObject(TodayItemData::class.java)
+                            Log.d("TodayViewModel", "Fetched item: $item")
+                            item
+                        }
+                        _itemList.value = items
+                        Log.d("TodayViewModel", "Fetched ${items.size} items")
+                    } else {
+                        Log.d("TodayViewModel", "No items found in todayItems collection")
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e("TodayViewModel", "Error getting todayItems data", it)
+                }
         }
     }
 }
@@ -30,12 +42,27 @@ class TodayViewModel() : ViewModel() {
 class UpcomingViewModel() : ViewModel() {
     private val _itemList = MutableStateFlow<List<UpcomingItemData>>(emptyList())
     val itemList: StateFlow<List<UpcomingItemData>> = _itemList
+    private val database = FirebaseFirestore.getInstance()
     init {
         viewModelScope.launch {
-            _itemList.value = listOf(
-                UpcomingItemData("2024.05.10", "2024. 05. 17", "3차 스터디", "compose 스터디"),
-                UpcomingItemData("2024.06.01", "2024. 06. 08", "산학협력프로젝트 회의", "산학협력프로젝트1")
-            )
+            database.collection("upcomingItems")
+                .get()
+                .addOnSuccessListener { docs ->
+                    if(!docs.isEmpty) {
+                        val items = docs.map {doc ->
+                            val item = doc.toObject(UpcomingItemData::class.java)
+                            Log.d("UpcomingViewModel", "Fetched item: $item")
+                            item
+                        }
+                        _itemList.value = items
+                        Log.d("UpcomingViewModel", "Fetched ${items.size} items")
+                    } else {
+                        Log.d("UpcomingViewModel", "No items found in upcomingItems collection")
+                    }
+                }
+                .addOnFailureListener{
+                    Log.e("UpcomingViewModel", "Error getting upcomingItems data", it)
+                }
         }
     }
     fun getItemCount(): Int {
