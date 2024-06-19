@@ -36,7 +36,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun GroupDetail(
     navController: NavHostController,
-    meeting: Meeting,
+    meeting: Meeting
 ) {
     val groupDetailViewModel: GroupDetailViewModel = viewModel(
         factory = GroupDetailViewModelFactory(meeting)
@@ -53,7 +53,6 @@ fun GroupDetail(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -72,7 +71,7 @@ fun GroupDetail(
                         scope.launch {
                             drawerState.open()
                         }
-                    })
+                    }, navController = navController)
                 }
             }
             item{

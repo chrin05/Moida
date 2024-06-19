@@ -21,7 +21,7 @@ class GroupDetailViewModel(meeting: Meeting) : ViewModel() {
                 GroupItemData("2차 스터디", "2024.06.07", "13:00"),
                 GroupItemData("첫 회식", "2024.06.08", "18:00")
             )
-            _groupInfo.value = GroupInfo(meeting.name, meeting.imageRes, meeting.members.size)
+            _groupInfo.value = GroupInfo(meeting.id, meeting.name, meeting.imageRes, meeting.members.size)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.moida.component
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.model.GroupDetailViewModel
 import com.example.moida.model.GroupInfo
 import com.example.moida.model.Routes
 import com.example.moida.screen.imageResources
@@ -179,7 +181,7 @@ fun HomeTitle(
 }
 
 @Composable
-fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
+fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit, navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -244,7 +246,11 @@ fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
             )
 
             OutlinedButton(
-                onClick = { },
+                onClick = {
+                    val route = Routes.CreateGroupSchedule.createRoute(group.groupId)
+                    Log.d("GroupDetailTitle", "Navigating to: $route")
+                    navController.navigate(route)
+                },
                 modifier = Modifier
                     .wrapContentSize()
                     .padding(top = 37.dp),

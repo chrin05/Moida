@@ -37,6 +37,7 @@ import com.example.moida.component.NameTextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
+import com.example.moida.model.GroupDetailViewModel
 import com.example.moida.model.Routes
 import com.example.moida.model.schedule.NewScheduleViewModel
 import com.example.moida.ui.theme.Pretendard
@@ -44,8 +45,10 @@ import com.example.moida.ui.theme.Pretendard
 @Composable
 fun CreateGroupSchedule(
     navController: NavHostController,
+    groupId: String,
     newScheduleViewModel: NewScheduleViewModel = viewModel()
 ) {
+    // groupId 인자로 받음
     Column(
         modifier = Modifier
             .fillMaxSize()
