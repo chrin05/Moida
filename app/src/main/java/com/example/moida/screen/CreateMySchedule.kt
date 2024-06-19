@@ -30,10 +30,7 @@ fun CreateMySchedule(
 ) {
     val scheduleName by shareViewModel.scheduleName.collectAsState()
     val scheduleDate by shareViewModel.scheduleDate.collectAsState()
-//    var name by remember { mutableStateOf(scheduleName) }
-    var date by remember { mutableStateOf(scheduleDate) }
-    var time = shareViewModel.scheduleTime
-
+    val scheduleTime by shareViewModel.scheduleTime.collectAsState()
 
     Column(
         modifier = Modifier
@@ -52,15 +49,11 @@ fun CreateMySchedule(
                 .padding(start = 24.dp, top = 40.dp, end = 24.dp)
         ) {
             NameTextField(title = "일정 이름", name = scheduleName, onValueChange = {
-                //scheduleName = it
                 shareViewModel.changeSName(it)
-                Log.i("chrin", "CreateMySchedule: namefield name = ${shareViewModel.scheduleName.value}")
                 }, "일정 이름 입력")
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            DateField(navController, title = "일정 날짜", date = date, onValueChange = {
-                date = it
-                shareViewModel.changeSDate(it)
-                Log.i("chrin", "CreateMySchedule: datefield date = $date")})
+            DateField(navController, title = "일정 날짜", date = scheduleDate, onValueChange = {
+                shareViewModel.changeSDate(it)})
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
             //TimeField(navController, title = "일정 시간", onValueChange = { time = it })
         }

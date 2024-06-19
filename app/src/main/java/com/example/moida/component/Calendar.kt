@@ -1,5 +1,6 @@
 package com.example.moida.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -120,7 +121,9 @@ fun <T> MainCalendar(
 }
 
 @Composable
-fun BottomSheetCalendar() {
+fun BottomSheetCalendar(
+    onDateClick: (LocalDate) -> Unit
+) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(50) }
     val endMonth = remember { currentMonth.plusMonths(100) }
@@ -164,6 +167,7 @@ fun BottomSheetCalendar() {
                         isSelected = selectedDate == day.date
                     ) { selectedDay ->
                         selectedDate  = if (selectedDate == selectedDay.date) null else selectedDay.date
+                        onDateClick(selectedDate)
                     }
                 }
             },
@@ -311,7 +315,6 @@ fun BottomSheetDay(
     isSelected: Boolean,
     onClick: (CalendarDay) -> Unit
 ) {
-    val selectedDate = remember { mutableStateOf<LocalDate?>(day.date) }
     val textColor = when {
         day.date == LocalDate.now() -> colorResource(id = R.color.main_blue)
         day.date.dayOfWeek == DayOfWeek.SUNDAY -> colorResource(id = R.color.error)

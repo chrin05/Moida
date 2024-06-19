@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -181,6 +182,17 @@ fun DateField(
     ) {
         var date by remember { mutableStateOf(date) }
 
+        LaunchedEffect(navController.currentBackStackEntry) {
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<String>("selectedDate")
+                ?.value
+                ?.let { newDate->
+                    date = newDate
+                    onValueChange(date)
+                }
+        }
+
         FieldTitle(title = title)
         Row(
             modifier = Modifier
@@ -209,7 +221,6 @@ fun DateField(
                     fontWeight = FontWeight(400),
                     color = colorResource(id = R.color.gray_800),
                 )
-                onValueChange(date)
             }
             Image(
                 painter = painterResource(id = R.drawable.ic_calendar),

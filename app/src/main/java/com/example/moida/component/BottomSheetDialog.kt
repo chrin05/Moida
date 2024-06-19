@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
+import java.time.format.DateTimeFormatter
 
 //@Composable
 //fun CalendarBottomSheet(
@@ -66,12 +67,18 @@ fun CalendarBottomSheet(
                     .padding(bottom = 30.dp)
             ) {
 
-                BottomSheetCalendar { selectedDate = it }
+                BottomSheetCalendar { selectedDate = it.toString() }
 
                 Button(
                     onClick = {
                         //onDismiss()값 넘기기
-                        navController.popBackStack()
+                        selectedDate = selectedDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+                        selectedDate?.let { date->
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("selectedDate", date)
+                            navController.popBackStack()
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (true) {
