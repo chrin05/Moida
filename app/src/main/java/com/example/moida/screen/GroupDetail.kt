@@ -36,7 +36,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun GroupDetail(
     navController: NavHostController,
-    meeting: Meeting,
+    meeting: Meeting
 ) {
     val groupDetailViewModel: GroupDetailViewModel = viewModel(
         factory = GroupDetailViewModelFactory(meeting)
@@ -54,7 +54,6 @@ fun GroupDetail(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true, // 사이드바 슬라이드로 열고 닫기 가능
@@ -68,11 +67,12 @@ fun GroupDetail(
         ) {
             item {
                 groupInfo?.let {
-                    GroupDetailTitle(group = it, onMenuClick = {
-                        scope.launch {
-                            drawerState.open()
+                    GroupDetailTitle(
+                        group = it,
+                        onMenuClick = {
+                            scope.launch { drawerState.open() }
                         }
-                    })
+                    , navController = navController)
                 }
             }
             item{

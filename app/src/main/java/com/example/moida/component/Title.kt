@@ -1,5 +1,6 @@
 package com.example.moida.component
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.model.BottomNavItem
+import com.example.moida.model.GroupDetailViewModel
 import com.example.moida.model.GroupInfo
 import com.example.moida.model.Routes
 import com.example.moida.screen.imageResources
@@ -161,7 +164,7 @@ fun HomeTitle(
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Routes.CreateGroupSchedule.route)
+                navController.navigate(Routes.CreateMySchedule.route)
             },
             modifier = Modifier
                 .wrapContentSize(),
@@ -179,7 +182,7 @@ fun HomeTitle(
 }
 
 @Composable
-fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
+fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit, navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -207,7 +210,8 @@ fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(Color.White.copy(alpha = 0.5f))
-                        .padding(start = 6.dp, top = 8.dp, bottom = 8.dp, end = 10.dp),
+                        .padding(start = 6.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
+                        .clickable { navController.navigate(BottomNavItem.Group.route) },
                     tint = colorResource(id = R.color.text_high)
                 )
                 Icon(
@@ -244,7 +248,10 @@ fun GroupDetailTitle(group: GroupInfo, onMenuClick: () -> Unit) {
             )
 
             OutlinedButton(
-                onClick = { },
+                onClick = {
+                    val route = Routes.CreateGroupSchedule.createRoute(group.groupId)
+                    navController.navigate(route)
+                },
                 modifier = Modifier
                     .wrapContentSize()
                     .padding(top = 37.dp),
