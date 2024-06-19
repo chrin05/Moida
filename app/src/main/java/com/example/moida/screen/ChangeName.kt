@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.component.NameTextField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
 import com.example.moida.model.Routes
@@ -69,7 +70,7 @@ fun ChangeName(navController: NavHostController) {
             Modifier.background(Color.White)
                 .padding(start = 24.dp, end = 16.dp)
         ) {
-            //NameTextField(shareViewModel, title = "이름", onValueChange = { name = it }, "이름 입력") 수정필요
+            NameTextField(title = "이름", onValueChange = { name = it }, "이름 입력")
         }
 
         Spacer(modifier = Modifier.weight(1f))
