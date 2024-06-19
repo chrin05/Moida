@@ -112,9 +112,7 @@ fun NavGraph(navController: NavHostController) {
 
         composable(
             route = Routes.CreateGroupSchedule.route,
-            arguments = listOf(navArgument("groupId") {
-                type = NavType.StringType
-            }
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType })
         ) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Routes.CreateGroupSchedule.route)
@@ -137,9 +135,7 @@ fun NavGraph(navController: NavHostController) {
 
         composable(
             route = Routes.GroupDetail.route,
-            arguments = listOf(navArgument("meetingJson") {
-                type = NavType.StringType
-            })
+            arguments = listOf(navArgument("meetingJson") { type = NavType.StringType })
         ) { backStackEntry ->
             val meetingJson = backStackEntry.arguments?.getString("meetingJson")
             val gson = Gson()
