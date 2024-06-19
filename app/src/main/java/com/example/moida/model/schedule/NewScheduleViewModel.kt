@@ -3,6 +3,10 @@ package com.example.moida.model.schedule
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.moida.model.GroupDetailViewModel
+import com.example.moida.model.Meeting
 
 data class NewScheduleData(
     var scheduleName: String,
@@ -34,6 +38,15 @@ class NewScheduleViewModel(private val application: Application) : AndroidViewMo
     }
 
     fun getLastId(): Int {
-        return newScheduleList[newScheduleList.size].scheduleId
+        return newScheduleList[newScheduleList.size-1].scheduleId
+    }
+}
+
+class NewScheduleViewModelFactory(private val meeting: Meeting) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(GroupDetailViewModel::class.java)) {
+            return GroupDetailViewModel(meeting) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

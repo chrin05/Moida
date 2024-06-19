@@ -1,6 +1,7 @@
 package com.example.moida.component
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.model.Routes
+import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 
 
@@ -57,13 +59,14 @@ fun FieldTitle(
 @Composable
 fun NameTextField(
     title: String,
+    name: String,
     onValueChange: (String) -> Unit,
-    placeHolderString: String = "일정 이름 입력"
+    placeHolderString: String
 ) {
     Column(
         modifier = Modifier
     ) {
-        var name by remember { mutableStateOf("") }
+        var name by remember { mutableStateOf(name) }
         var isFocused by remember { mutableStateOf(false) }
 
         FieldTitle(title = title)
@@ -97,7 +100,8 @@ fun NameTextField(
                 //입력이 안되어 있을 땐 아이콘 안보이게
             }
         }
-        val lineColor = if (isFocused) colorResource(id = R.color.main_blue) else colorResource(id = R.color.gray_300)
+        val lineColor =
+            if (isFocused) colorResource(id = R.color.main_blue) else colorResource(id = R.color.gray_300)
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -169,18 +173,22 @@ fun InputEditText(
 fun DateField(
     navController: NavHostController,
     title: String,
+    date: String,
     onValueChange: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
     ) {
-        var date by remember { mutableStateOf("") }
+        var date by remember { mutableStateOf(date) }
 
         FieldTitle(title = title)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp),
+                .padding(top = 10.dp)
+                .clickable {
+                    navController.navigate(Routes.CalendarBottomSheet.route)
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             if (date.isEmpty()) {
@@ -201,6 +209,7 @@ fun DateField(
                     fontWeight = FontWeight(400),
                     color = colorResource(id = R.color.gray_800),
                 )
+                onValueChange(date)
             }
             Image(
                 painter = painterResource(id = R.drawable.ic_calendar),
@@ -208,9 +217,6 @@ fun DateField(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(16.dp)
-                    .clickable {
-                        navController.navigate(Routes.CalendarBottomSheet.route)
-                    }
             )
         }
         Canvas(
@@ -240,7 +246,10 @@ fun TimeField(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp),
+            .padding(top = 10.dp)
+            .clickable {
+                navController.navigate(Routes.TimePicker.route)
+            },
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         if (time.isEmpty()) {
@@ -261,6 +270,7 @@ fun TimeField(
                 fontWeight = FontWeight(400),
                 color = colorResource(id = R.color.gray_800),
             )
+            onValueChange(time)
         }
         Image(
             painter = painterResource(id = R.drawable.ic_clock),
@@ -268,9 +278,6 @@ fun TimeField(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(16.dp)
-                .clickable {
-
-                }
         )
     }
     Canvas(

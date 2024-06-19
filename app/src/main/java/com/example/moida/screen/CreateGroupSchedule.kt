@@ -66,11 +66,11 @@ fun CreateGroupSchedule(
             modifier = Modifier
                 .padding(start = 24.dp, top = 40.dp, end = 24.dp)
         ) {
-            NameTextField(title = "일정 이름", onValueChange = { name = it })
+            //NameTextField(title = "일정 이름", onValueChange = { name = it })
 
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
 
-            DateField(navController, title = "일정 기간 - 시작일", onValueChange = { date = it })
+            //DateField(navController, title = "일정 기간 - 시작일", onValueChange = { date = it })
 
             Row(
                 modifier = Modifier.padding(top = 10.dp)

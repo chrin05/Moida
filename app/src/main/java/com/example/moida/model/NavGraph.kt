@@ -1,7 +1,8 @@
 package com.example.moida.model
 
-import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -9,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
+import com.example.moida.component.TimePicker
+import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.screen.ChangeName
 import com.example.moida.screen.ChangedName
 import com.example.moida.screen.CreateGroupSchedule
@@ -62,11 +65,14 @@ sealed class Routes(val route: String) {
             return "groupDetail/$meetingJson"
         }
     }
+    data object TimePicker : Routes("timePicker")
 }
 
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
+        //val shareViewModel = ShareViewModel()
+
         composable(BottomNavItem.Home.route) {
             MainHome(navController)
         }
@@ -93,8 +99,12 @@ fun NavGraph(navController: NavHostController) {
             ResignMemberShip(navController)
         }
 
-        composable(Routes.CreateMySchedule.route) {
-            CreateMySchedule(navController)
+        composable(Routes.CreateMySchedule.route) {backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Routes.CreateMySchedule.route)
+            }
+            val shareViewModel: ShareViewModel = viewModel(parentEntry)
+            CreateMySchedule(navController, shareViewModel)
         }
 
         composable(Routes.CreateGroupSchedule.route) {
@@ -160,6 +170,10 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Routes.CalendarBottomSheet.route) {
             CalendarBottomSheet(navController)
+        }
+
+        composable(Routes.TimePicker.route) {
+            TimePicker(navController)
         }
     }
 }

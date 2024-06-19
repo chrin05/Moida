@@ -14,75 +14,84 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moida.R
+import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 
-@Composable
-fun CalendarBottomSheet(
-    navcontroller: NavHostController,
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        CalendarBottomSheetDialog(navcontroller, onDismiss = {})
-
-    }
-}
+//@Composable
+//fun CalendarBottomSheet(
+//    navController: NavHostController,
+//    shareViewModel: ShareViewModel,
+//) {
+//    Column(modifier = Modifier.fillMaxSize()) {
+//        CalendarBottomSheetDialog(navController, shareViewModel)
+//    }
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarBottomSheetDialog(
-    navcontroller: NavHostController,
-    onDismiss: () -> Unit
+fun CalendarBottomSheet(
+    navController: NavHostController,
 ) {
+    var selectedDate by remember { mutableStateOf("") }
     val modalBottomSheetState = rememberModalBottomSheetState()
 
-    ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
-        sheetState = modalBottomSheetState,
-        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-        containerColor = colorResource(id = R.color.white),
-        dragHandle = { BottomSheetDefaults.DragHandle()},
-        modifier = Modifier
-            .fillMaxWidth()
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
+        ModalBottomSheet(
+            onDismissRequest = { },
+            sheetState = modalBottomSheetState,
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            containerColor = colorResource(id = R.color.white),
+            dragHandle = { BottomSheetDefaults.DragHandle()},
             modifier = Modifier
-                .padding(horizontal = 30.dp)
-                .padding(bottom = 30.dp)
+                .fillMaxWidth()
         ) {
-
-            BottomSheetCalendar()
-
-            Button(
-                onClick = {
-                          //onDismiss()값 넘기기
-                          navcontroller.popBackStack()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (true) {
-                        colorResource(id = R.color.main_blue)
-                    } else colorResource(id = R.color.gray_200)
-                ),
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                shape = MaterialTheme.shapes.small
+                    .padding(horizontal = 30.dp)
+                    .padding(bottom = 30.dp)
             ) {
-                Text(
-                    text = "적용하기",
-                    color = Color.White,
-                    fontFamily = Pretendard,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp
-                )
-            }
 
+                BottomSheetCalendar { selectedDate = it }
+
+                Button(
+                    onClick = {
+                        //onDismiss()값 넘기기
+                        navController.popBackStack()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (true) {
+                            colorResource(id = R.color.main_blue)
+                        } else colorResource(id = R.color.gray_200)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = "적용하기",
+                        color = Color.White,
+                        fontFamily = Pretendard,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp
+                    )
+                }
+
+            }
         }
     }
 }

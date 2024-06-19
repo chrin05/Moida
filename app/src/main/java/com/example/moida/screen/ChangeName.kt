@@ -55,6 +55,7 @@ import com.example.moida.component.NameTextField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
 import com.example.moida.model.Routes
+import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 import com.example.moida.util.SharedPreferencesHelper
 import com.google.common.io.Files.append
@@ -91,7 +92,7 @@ fun ChangeName(navController: NavHostController) {
             Modifier.background(Color.White)
                 .padding(start = 24.dp, end = 16.dp)
         ) {
-            NameTextField(title = "이름", onValueChange = { name = it }, "이름 입력")
+            //NameTextField(shareViewModel, title = "이름", onValueChange = { name = it }, "이름 입력") 수정필요
         }
 
         Spacer(modifier = Modifier.weight(1f))

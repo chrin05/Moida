@@ -1,11 +1,13 @@
 package com.example.moida.screen
 
-import androidx.compose.foundation.layout.Box
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,20 +21,24 @@ import com.example.moida.component.NameTextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
-import com.example.moida.model.Routes
+import com.example.moida.model.schedule.ShareViewModel
 
 @Composable
 fun CreateMySchedule(
-    navController: NavHostController
+    navController: NavHostController,
+    shareViewModel: ShareViewModel,
 ) {
+    val scheduleName by shareViewModel.scheduleName.collectAsState()
+    val scheduleDate by shareViewModel.scheduleDate.collectAsState()
+//    var name by remember { mutableStateOf(scheduleName) }
+    var date by remember { mutableStateOf(scheduleDate) }
+    var time = shareViewModel.scheduleTime
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        var name by remember { mutableStateOf("") }
-        var date by remember { mutableStateOf("") }
-        var time by remember { mutableStateOf("") }
-
         Title(
             navController = navController,
             route = BottomNavItem.Home.route,
@@ -45,11 +51,18 @@ fun CreateMySchedule(
             modifier = Modifier
                 .padding(start = 24.dp, top = 40.dp, end = 24.dp)
         ) {
-            NameTextField(title = "일정 이름", onValueChange = { name = it })
+            NameTextField(title = "일정 이름", name = scheduleName, onValueChange = {
+                //scheduleName = it
+                shareViewModel.changeSName(it)
+                Log.i("chrin", "CreateMySchedule: namefield name = ${shareViewModel.scheduleName.value}")
+                }, "일정 이름 입력")
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            DateField(navController, title = "일정 날짜", onValueChange = { date = it })
+            DateField(navController, title = "일정 날짜", date = date, onValueChange = {
+                date = it
+                shareViewModel.changeSDate(it)
+                Log.i("chrin", "CreateMySchedule: datefield date = $date")})
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            TimeField(navController, title = "일정 시간", onValueChange = { time = it })
+            //TimeField(navController, title = "일정 시간", onValueChange = { time = it })
         }
     }
 }

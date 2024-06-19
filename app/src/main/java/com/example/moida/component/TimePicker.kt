@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,18 +37,24 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.moida.R
+import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 
 @Composable
-fun TimePicker() {
+fun TimePicker(
+    navController: NavHostController,
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.White
@@ -106,6 +115,29 @@ fun TimePicker() {
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Normal
                     )
+                )
+            }
+            Button(
+                onClick = {
+                    //onDismiss()값 넘기기
+
+                    navController.popBackStack()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (true) {
+                        colorResource(id = R.color.main_blue)
+                    } else colorResource(id = R.color.gray_200)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    text = "적용하기",
+                    color = Color.White,
+                    fontFamily = Pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
                 )
             }
         }

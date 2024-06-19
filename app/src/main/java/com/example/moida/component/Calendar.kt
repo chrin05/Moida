@@ -32,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.moida.R
@@ -102,7 +101,7 @@ fun <T> MainCalendar(
                         isSelected = selectedDate == day.date,
                         hasEvents = hasEvents(day.date, events)
                     ) { selectedDay ->
-                        selectedDate  = selectedDay.date
+                        selectedDate = selectedDay.date
                         val title = if (selectedDate == today) {
                             "오늘의 일정"
                         } else {
@@ -255,6 +254,7 @@ fun MonthHeader(daysOfWeek: List<DayOfWeek>) {
         }
     }
 }
+
 @Composable
 fun MainDay(
     day: CalendarDay,
@@ -363,8 +363,8 @@ fun isHoliday(date: LocalDate): Boolean {
     return date in holidays
 }
 
-@Composable
-@Preview
-fun CalendarPreview() {
-    BottomSheetCalendar()
-}
+//@Composable
+//@Preview
+//fun CalendarPreview() {
+//    BottomSheetCalendar()
+//}
