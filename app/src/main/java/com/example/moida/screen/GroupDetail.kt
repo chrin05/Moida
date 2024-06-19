@@ -72,7 +72,7 @@ fun GroupDetail(
                         onMenuClick = {
                             scope.launch { drawerState.open() }
                         }
-                    }, navController = navController)
+                    , navController = navController)
                 }
             }
             item{
