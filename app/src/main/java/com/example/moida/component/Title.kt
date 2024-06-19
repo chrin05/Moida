@@ -163,7 +163,7 @@ fun HomeTitle(
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Routes.CreateGroupSchedule.route)
+                navController.navigate(Routes.CreateMySchedule.route)
             },
             modifier = Modifier
                 .wrapContentSize(),

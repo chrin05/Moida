@@ -1,7 +1,7 @@
 package com.example.moida.model
 
-import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -10,6 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
+import com.example.moida.component.TimePicker
+import com.example.moida.model.schedule.GroupScheduleViewModel
+import com.example.moida.model.schedule.MyScheduleViewModel
 import com.example.moida.screen.ChangeName
 import com.example.moida.screen.ChangedName
 import com.example.moida.screen.CreateGroupSchedule
@@ -65,11 +68,14 @@ sealed class Routes(val route: String) {
             return "groupDetail/$meetingJson"
         }
     }
+    data object TimePicker : Routes("timePicker")
 }
 
 @Composable
 fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
+        //val shareViewModel = ShareViewModel()
+
         composable(BottomNavItem.Home.route) {
             MainHome(navController)
         }
@@ -96,18 +102,26 @@ fun NavGraph(navController: NavHostController) {
             ResignMemberShip(navController)
         }
 
-        composable(Routes.CreateMySchedule.route) {
-            CreateMySchedule(navController)
+        composable(Routes.CreateMySchedule.route) {backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Routes.CreateMySchedule.route)
+            }
+            val myScheduleViewModel: MyScheduleViewModel = viewModel(parentEntry)
+            CreateMySchedule(navController, myScheduleViewModel)
         }
 
         composable(
             route = Routes.CreateGroupSchedule.route,
             arguments = listOf(navArgument("groupId") {
                 type = NavType.StringType
-            })
+            }
         ) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Routes.CreateGroupSchedule.route)
+            }
+            val groupScheduleViewModel: GroupScheduleViewModel = viewModel(parentEntry)
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
-            CreateGroupSchedule(navController, groupId)
+            CreateGroupSchedule(navController, groupScheduleViewModel, groupId)
         }
 
         composable(Routes.ScheduleDetail.route) {
@@ -169,6 +183,10 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Routes.CalendarBottomSheet.route) {
             CalendarBottomSheet(navController)
+        }
+
+        composable(Routes.TimePicker.route) {
+            TimePicker(navController)
         }
     }
 }
