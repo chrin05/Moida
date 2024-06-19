@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,21 +39,30 @@ import com.example.moida.component.NameTextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
-import com.example.moida.model.GroupDetailViewModel
 import com.example.moida.model.Routes
 import com.example.moida.model.schedule.GroupScheduleViewModel
-import com.example.moida.model.schedule.NewScheduleViewModel
+import com.example.moida.model.schedule.Repository
+import com.example.moida.model.schedule.ScheduleData
+import com.example.moida.model.schedule.ScheduleViewModel
+import com.example.moida.model.schedule.ScheduleViewModelFactory
 import com.example.moida.ui.theme.Pretendard
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 
 @Composable
 fun CreateGroupSchedule(
     navController: NavHostController,
     groupScheduleViewModel: GroupScheduleViewModel,
+    scheduleViewModel: ScheduleViewModel,
     groupId: String,
 ) {
     val scheduleName by groupScheduleViewModel.scheduleName.collectAsState()
     val scheduleDate by groupScheduleViewModel.scheduleDate.collectAsState()
-    
+
+    val context = LocalContext.current
+    val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
+    val userName = signInViewModel.userName
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,12 +81,15 @@ fun CreateGroupSchedule(
             modifier = Modifier
                 .padding(start = 24.dp, top = 40.dp, end = 24.dp)
         ) {
-            NameTextField(title = "일정 이름", name = scheduleName, onValueChange = {
-                groupScheduleViewModel.changeGSName(it) },
-                "일정 이름 입력")
+            NameTextField(
+                title = "일정 이름", name = scheduleName, onValueChange = {
+                    groupScheduleViewModel.changeGSName(it)
+                },
+                "일정 이름 입력"
+            )
 
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            DateField(navController, title = "일정 기간 - 시작일",  date = scheduleDate,
+            DateField(navController, title = "일정 기간 - 시작일", date = scheduleDate,
                 onValueChange = { groupScheduleViewModel.changeGSDate(it) })
 
             Row(
@@ -107,9 +120,11 @@ fun CreateGroupSchedule(
                     .fillMaxWidth()
                     .padding(bottom = 20.dp),
                 onClick = {
-                    if (activate)  {
-                        navController.navigate("${Routes.TimeSheet.route}?scheduleId=0")
-                    } else { }
+                    if (activate) {
+                        val scheduleId = scheduleViewModel.AddSchedule(scheduleName, scheduleDate, groupId, userName.toString())
+                        navController.navigate("${Routes.TimeSheet.route}?scheduleId=$scheduleId")
+                    } else {
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (activate) colorResource(id = R.color.main_blue) else colorResource(

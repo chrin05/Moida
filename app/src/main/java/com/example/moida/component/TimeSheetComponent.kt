@@ -46,7 +46,7 @@ fun HeadOfTime( //날짜+요일 3개 출력
     page: Int
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
-    var currentDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+    var currentDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     var currentDay = startDay
 
     Column(
@@ -227,7 +227,7 @@ fun TimeBlockGroup( //화면에 대한 타임블록
     startDate: String
 ) {
     val timeList =
-        intArrayOf(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5)
+        intArrayOf(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 
     Row(
         modifier = Modifier

@@ -1,9 +1,8 @@
 package com.example.moida.screen
 
-import android.util.Log
+import androidx.collection.mutableIntListOf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,20 +15,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.BottomBtn
@@ -38,23 +42,58 @@ import com.example.moida.component.ShowTimeLine
 import com.example.moida.component.TimeBlockInputGroup
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
+import com.example.moida.model.schedule.ScheduleData
+import com.example.moida.model.schedule.ScheduleViewModel
 import com.example.moida.ui.theme.Pretendard
+import kotlinx.coroutines.flow.StateFlow
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun TimeInput(
     navController: NavHostController,
+    scheduleViewModel: ScheduleViewModel,
+    scheduleId: Int
 ) {
+    var startDate by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleStartDate) }
+    var startDay by remember { mutableStateOf(DayOfWeek.MONDAY) }
     var page by remember { mutableIntStateOf(1) }
-    var startDate by remember { mutableStateOf("2024.04.04") }
-    var startDay by remember { mutableStateOf(getDayofWeek(startDate)) }
-    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-    //val timeList by remember { mutableStateListOf<Int>(0) }
-    //val memberCount = 5
-    var isBtnClicked by remember {
-        mutableStateOf(false)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    val context = LocalContext.current
+    val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
+    val userName = signInViewModel.userName
+
+    var time1 = List(24) { 0 }.toMutableStateList()
+    var time2 = List(24) { 0 }.toMutableStateList()
+    var time3 = List(24) { 0 }.toMutableStateList()
+    var time4 = List(24) { 0 }.toMutableStateList()
+    var time5 = List(24) { 0 }.toMutableStateList()
+    var time6 = List(24) { 0 }.toMutableStateList()
+    var time7 = List(24) { 0 }.toMutableStateList()
+
+    var selectedItem by remember {
+        mutableStateOf<ScheduleData?>(null)
     }
+
+    LaunchedEffect(selectedItem) {
+        initInfo(scheduleId, scheduleViewModel) {
+            startDate = it.scheduleStartDate
+            startDay = getDayofWeek(startDate)
+        }
+        getUserSchedule(scheduleId, scheduleViewModel, userName) {
+            time1 = it[2] as SnapshotStateList<Int>
+            time2 = it[3] as SnapshotStateList<Int>
+            time3 = it[4] as SnapshotStateList<Int>
+            time4 = it[5] as SnapshotStateList<Int>
+            time5 = it[6] as SnapshotStateList<Int>
+            time6 = it[7] as SnapshotStateList<Int>
+            time7 = it[8] as SnapshotStateList<Int>
+        }
+    }
+
+    var isBtnClicked by remember { mutableStateOf(false) }
 
     Column {
         //제목부분
@@ -166,6 +205,17 @@ fun TimeInput(
                 activate = activate
             )
         }
+    }
+}
+
+fun getUserSchedule(
+    scheduleId: Int,
+    scheduleViewModel: ScheduleViewModel,
+    userName: StateFlow<String?>,
+    function: (List<Any>) -> Unit
+) {
+    scheduleViewModel.GetUserSchedule(scheduleId, userName.toString()) {
+        function(it)
     }
 }
 
