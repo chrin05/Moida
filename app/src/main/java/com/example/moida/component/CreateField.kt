@@ -249,9 +249,21 @@ fun DateField(
 fun TimeField(
     navController: NavHostController,
     title: String,
+    time: String,
     onValueChange: (String) -> Unit
 ) {
-    var time by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf(time) }
+
+    LaunchedEffect(navController.currentBackStackEntry) {
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("selectedTime")
+            ?.value
+            ?.let { newTime->
+                time = newTime
+                onValueChange(time)
+            }
+    }
 
     FieldTitle(title = title)
     Row(
@@ -281,7 +293,6 @@ fun TimeField(
                 fontWeight = FontWeight(400),
                 color = colorResource(id = R.color.gray_800),
             )
-            onValueChange(time)
         }
         Image(
             painter = painterResource(id = R.drawable.ic_clock),

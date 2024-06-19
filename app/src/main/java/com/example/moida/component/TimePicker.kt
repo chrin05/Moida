@@ -44,12 +44,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.wear.compose.material.MaterialTheme.colors
 import com.example.moida.R
 import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TimePicker(
@@ -119,9 +121,29 @@ fun TimePicker(
             }
             Button(
                 onClick = {
+                    var finalHour = ""
                     //onDismiss()값 넘기기
-
-                    navController.popBackStack()
+                    if (unitsPickerState.selectedItem == "오전") {
+                        if (hoursPickerState.selectedItem.toInt() > 12) {
+                            finalHour = (hoursPickerState.selectedItem.toInt() - 12).toString()
+                        } else {
+                            finalHour = hoursPickerState.selectedItem
+                        }
+                        if (finalHour.length == 1) finalHour = "0$finalHour"
+                    } else {
+                        if (hoursPickerState.selectedItem.toInt() < 12) {
+                            finalHour = (hoursPickerState.selectedItem.toInt() + 12).toString()
+                        } else {
+                            finalHour = hoursPickerState.selectedItem
+                        }
+                    }
+                    val selectedHour = "${finalHour}:${minutesPickerState.selectedItem}"
+                    selectedHour?.let { time->
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("selectedTime", time)
+                        navController.popBackStack()
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (true) {

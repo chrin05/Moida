@@ -22,6 +22,7 @@ import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
 import com.example.moida.model.schedule.ShareViewModel
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun CreateMySchedule(
@@ -55,7 +56,8 @@ fun CreateMySchedule(
             DateField(navController, title = "일정 날짜", date = scheduleDate, onValueChange = {
                 shareViewModel.changeSDate(it)})
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
-            //TimeField(navController, title = "일정 시간", onValueChange = { time = it })
+            TimeField(navController, title = "일정 시간", time = scheduleTime, onValueChange = {
+                shareViewModel.changeSTime(it)})
         }
     }
 }
