@@ -42,7 +42,9 @@ sealed class BottomNavItem(val title: Int, val icon: Int, var route: String) {
 
 sealed class Routes(val route: String) {
     data object CreateMySchedule : Routes("createMySchedule")
-    data object CreateGroupSchedule : Routes("createGroupSchedule")
+    data object CreateGroupSchedule : Routes("createGroupSchedule/{groupId}") {
+        fun createRoute(groupId: String) = "createGroupSchedule/$groupId"
+    }
     data object ScheduleDetail : Routes("scheduleDetail")
     data object TimeSheet : Routes("timeSheet")
     data object TimeInput : Routes("timeInput")
@@ -108,12 +110,18 @@ fun NavGraph(navController: NavHostController) {
             CreateMySchedule(navController, myScheduleViewModel)
         }
 
-        composable(Routes.CreateGroupSchedule.route) { backStackEntry ->
+        composable(
+            route = Routes.CreateGroupSchedule.route,
+            arguments = listOf(navArgument("groupId") {
+                type = NavType.StringType
+            }
+        ) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Routes.CreateGroupSchedule.route)
             }
             val groupScheduleViewModel: GroupScheduleViewModel = viewModel(parentEntry)
-            CreateGroupSchedule(navController, groupScheduleViewModel)
+            val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
+            CreateGroupSchedule(navController, groupScheduleViewModel, groupId)
         }
 
         composable(Routes.ScheduleDetail.route) {
@@ -134,10 +142,10 @@ fun NavGraph(navController: NavHostController) {
             })
         ) { backStackEntry ->
             val meetingJson = backStackEntry.arguments?.getString("meetingJson")
-                val gson = Gson()
-                val decodedMeetingJson = URLDecoder.decode(meetingJson, StandardCharsets.UTF_8.toString())
-                val meeting = gson.fromJson(decodedMeetingJson, Meeting::class.java)
-                GroupDetail(navController, meeting)
+            val gson = Gson()
+            val decodedMeetingJson = URLDecoder.decode(meetingJson, StandardCharsets.UTF_8.toString())
+            val meeting = gson.fromJson(decodedMeetingJson, Meeting::class.java)
+            GroupDetail(navController, meeting)
         }
 
         composable(

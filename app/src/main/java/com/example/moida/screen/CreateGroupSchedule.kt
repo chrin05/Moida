@@ -38,6 +38,7 @@ import com.example.moida.component.NameTextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
+import com.example.moida.model.GroupDetailViewModel
 import com.example.moida.model.Routes
 import com.example.moida.model.schedule.GroupScheduleViewModel
 import com.example.moida.model.schedule.NewScheduleViewModel
@@ -47,10 +48,11 @@ import com.example.moida.ui.theme.Pretendard
 fun CreateGroupSchedule(
     navController: NavHostController,
     groupScheduleViewModel: GroupScheduleViewModel,
+    groupId: String,
 ) {
     val scheduleName by groupScheduleViewModel.scheduleName.collectAsState()
     val scheduleDate by groupScheduleViewModel.scheduleDate.collectAsState()
-
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
