@@ -68,11 +68,12 @@ fun GroupDetail(
         ) {
             item {
                 groupInfo?.let {
-                    GroupDetailTitle(group = it, onMenuClick = {
-                        scope.launch {
-                            drawerState.open()
+                    GroupDetailTitle(
+                        group = it,
+                        onMenuClick = {
+                            scope.launch { drawerState.open() }
                         }
-                    })
+                    )
                 }
             }
             item{

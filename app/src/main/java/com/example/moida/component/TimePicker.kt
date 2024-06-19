@@ -44,14 +44,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.MaterialTheme.colors
 import com.example.moida.R
-import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun TimePicker(

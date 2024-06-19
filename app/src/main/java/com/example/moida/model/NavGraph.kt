@@ -11,7 +11,8 @@ import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
 import com.example.moida.component.TimePicker
-import com.example.moida.model.schedule.ShareViewModel
+import com.example.moida.model.schedule.GroupScheduleViewModel
+import com.example.moida.model.schedule.MyScheduleViewModel
 import com.example.moida.screen.ChangeName
 import com.example.moida.screen.ChangedName
 import com.example.moida.screen.CreateGroupSchedule
@@ -103,12 +104,16 @@ fun NavGraph(navController: NavHostController) {
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Routes.CreateMySchedule.route)
             }
-            val shareViewModel: ShareViewModel = viewModel(parentEntry)
-            CreateMySchedule(navController, shareViewModel)
+            val myScheduleViewModel: MyScheduleViewModel = viewModel(parentEntry)
+            CreateMySchedule(navController, myScheduleViewModel)
         }
 
-        composable(Routes.CreateGroupSchedule.route) {
-            CreateGroupSchedule(navController)
+        composable(Routes.CreateGroupSchedule.route) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Routes.CreateGroupSchedule.route)
+            }
+            val groupScheduleViewModel: GroupScheduleViewModel = viewModel(parentEntry)
+            CreateGroupSchedule(navController, groupScheduleViewModel)
         }
 
         composable(Routes.ScheduleDetail.route) {

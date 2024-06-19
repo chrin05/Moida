@@ -14,7 +14,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,19 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.moida.R
-import com.example.moida.model.schedule.ShareViewModel
 import com.example.moida.ui.theme.Pretendard
 import java.time.format.DateTimeFormatter
-
-//@Composable
-//fun CalendarBottomSheet(
-//    navController: NavHostController,
-//    shareViewModel: ShareViewModel,
-//) {
-//    Column(modifier = Modifier.fillMaxSize()) {
-//        CalendarBottomSheetDialog(navController, shareViewModel)
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,15 +90,3 @@ fun CalendarBottomSheet(
         }
     }
 }
-
-
-//@Preview
-//@Composable
-//fun PreviewBottomSheetDialog(){
-//
-//    Column(modifier = Modifier.fillMaxSize()) {
-//        CalendarBottomSheetDialog(onDismiss = {})
-//
-//    }
-//
-//}
