@@ -12,7 +12,9 @@ import kotlinx.coroutines.launch
 
 class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
     private val _itemList = MutableStateFlow<List<UserTime>>(emptyList())
-    val itemList: StateFlow<List<UserTime>> = _itemList
+    //val itemList: StateFlow<List<UserTime>> = _itemList
+    private var _itemList2 = MutableStateFlow<List<UserTime2>>(emptyList())
+    val itemList2: StateFlow<List<UserTime2>> = _itemList2
     var selectedItem = UserTime("-1", "", "", "", "", "", "", "", "")
     private val database = Firebase.firestore
 
@@ -62,12 +64,12 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
         }
     }
 
-    fun GetAllUserTime(scheduleId: Int) {
+    fun GetAllUserTime(scheduleId: Int): StateFlow<List<UserTime2>> {
         viewModelScope.launch {
-            repository.getAllUserTime(scheduleId.toString()).collect {
-                _itemList.value = it
-            }
+            repository.getAllUserTime(scheduleId.toString(), callback = {_itemList2.value = it})
         }
+        Log.i("chrin", "[UserTimeViewModel] GetUserTime itmeList2: ${_itemList2.value}")
+        return _itemList2
     }
 
     fun GetUserTime(scheduleId: Int, userName: String, callback: (UserTime) -> Unit) {
@@ -76,8 +78,9 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
                 if (it != null) {
                     selectedItem = it
                     callback(it)
+                    Log.i("chrin", "GetUserTime: getUser it $it")
+                    return@getUserTime
                 }
-                Log.i("chrin3", "GetUserTime: $it")
             }
         }
     }

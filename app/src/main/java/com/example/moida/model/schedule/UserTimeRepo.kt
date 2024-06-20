@@ -1,7 +1,6 @@
 package com.example.moida.model.schedule
 
 import android.util.Log
-import androidx.collection.longIntMapOf
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -51,7 +50,7 @@ class UserTimeRepo(private val table: DatabaseReference) {
             .child("time7").setValue(userTime.time7)
     }
 
-    fun getUserTime(scheduleId: String, userName: String, callback: (UserTime?)->Unit) {
+    fun getUserTime(scheduleId: String, userName: String, callback: (UserTime?) -> Unit) {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (itemSnapshot in snapshot.children) {
@@ -78,18 +77,6 @@ class UserTimeRepo(private val table: DatabaseReference) {
                             }
                         }
                     }
-
-//                    val item = itemSnapshot.getValue(UserTime::class.java)
-//
-//                    Log.i("chrin", "[getUserTime] onDataChange: \nitem : $item\nitemsnap $itemSnapshot")
-//                    item?.let {
-//                        if (it.scheduleId == scheduleId) {
-//                            if (it.userName == userName) {
-//                                Log.i("chrin", "[getUserTime] onDataChange: $it")
-//                                callback(it)
-//                            }
-//                        }
-//                    }
                 }
                 callback(null)
             }
@@ -102,18 +89,38 @@ class UserTimeRepo(private val table: DatabaseReference) {
         table.addValueEventListener(listener)
     }
 
-    fun getAllUserTime(scheduleId: String): Flow<List<UserTime>> = callbackFlow {
+    fun getAllUserTime(
+        scheduleId: String,
+        callback: (List<UserTime2>) -> Unit
+    ) {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val itemList = mutableListOf<UserTime>()
+//                val itemList = mutableListOf<UserTime2>()
+//                for (itemSnapshot in snapshot.children) {
+//                    val item = itemSnapshot.getValue(UserTime2::class.java)
+//                    item?.let {
+//                        if (it.scheduleId == scheduleId)
+//                            itemList.add(it)
+//                    }
+//                }
+//                trySend(itemList)
+                val itemList = mutableListOf<UserTime2>()
                 for (itemSnapshot in snapshot.children) {
-                    val item = itemSnapshot.getValue(UserTime::class.java)
-                    item?.let {
-                        if (it.scheduleId == scheduleId)
-                            itemList.add(it)
+                    //Log.i("chrin", "onDataChange: \nfor문 안\nitemsnophot.key=${itemSnapshot.key}\nvalue=${itemSnapshot.value}")
+                    if (itemSnapshot.key == scheduleId) {
+                        for (itemSnapshot2 in itemSnapshot.children) {
+                            val item = itemSnapshot2.getValue(UserTime2::class.java)
+                            item?.let {
+                                itemList.add(it)
+                            }
+                        }
+                        Log.i("chrin", "[UserTImeRepo]\nonDataChange:\nitemList = $itemList")
+                        callback(itemList)
+                        //trySend(itemList)
                     }
                 }
-                trySend(itemList)
+                //trySend(itemList)
+                return
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -122,8 +129,8 @@ class UserTimeRepo(private val table: DatabaseReference) {
         }
 
         table.addValueEventListener(listener) //변경사항을 background에서 감지 중 변경 발생하면 onDataChange 불러짐
-        awaitClose {
-            table.removeEventListener(listener)
-        }
+//        awaitClose {
+//            table.removeEventListener(listener)
+//        }
     }
 }

@@ -67,22 +67,13 @@ fun TimeInput(
     val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
     val userName = signInViewModel.userName.value
 
-    val t1 = userTimeViewModel.selectedItem.time1.split(",").map { it.toInt() }
-    val t2 = userTimeViewModel.selectedItem.time2.split(",").map { it.toInt() }
-    val t3 = userTimeViewModel.selectedItem.time3.split(",").map { it.toInt() }
-    val t4 = userTimeViewModel.selectedItem.time4.split(",").map { it.toInt() }
-    val t5 = userTimeViewModel.selectedItem.time5.split(",").map { it.toInt() }
-    val t6 = userTimeViewModel.selectedItem.time6.split(",").map { it.toInt() }
-    val t7 = userTimeViewModel.selectedItem.time7.split(",").map { it.toInt() }
-
-    var time1 by remember { mutableStateOf(t1) }
-    var time2 by remember { mutableStateOf(t2) }
-    var time3 by remember { mutableStateOf(t3) }
-    var time4 by remember { mutableStateOf(t4) }
-    var time5 by remember { mutableStateOf(t5) }
-    var time6 by remember { mutableStateOf(t6) }
-    var time7 by remember { mutableStateOf(t7) }
-
+    var time1 by remember { mutableStateOf(List(24) {0}) }
+    var time2 by remember { mutableStateOf(List(24) {0}) }
+    var time3 by remember { mutableStateOf(List(24) {0}) }
+    var time4 by remember { mutableStateOf(List(24) {0}) }
+    var time5 by remember { mutableStateOf(List(24) {0}) }
+    var time6 by remember { mutableStateOf(List(24) {0}) }
+    var time7 by remember { mutableStateOf(List(24) {0}) }
 
     var selectedItem by remember {
         mutableStateOf<ScheduleData?>(null)
@@ -328,14 +319,6 @@ fun TimeInput(
                 .fillMaxWidth()
                 .padding(bottom = 20.dp, start = 24.dp, end = 24.dp),
             onClick = {
-//                var scheduleData = ScheduleData(
-//                    scheduleId = scheduleId,
-//                    scheduleName = scheduleViewModel.selectedItem.scheduleName,
-//                    scheduleStartDate = scheduleViewModel.selectedItem.scheduleStartDate,
-//                    scheduleTime = "",
-//                    category = scheduleViewModel.selectedItem.category,
-//                )
-//                scheduleViewModel.UdpateMemberTime(scheduleData)
                 var userTime = UserTime(
                     scheduleId = scheduleId.toString(),
                     userName = userName.toString(),
@@ -368,27 +351,5 @@ fun TimeInput(
         }
     }
 }
-
-//fun initUserTimeInfo(
-//    scheduleId: Int,
-//    userName: String,
-//    userTimeViewModel: UserTimeViewModel,
-//    onInit: (UserTime) -> Unit
-//) {
-//    userTimeViewModel.GetUserTime(scheduleId, userName) {
-//        onInit(it)
-//    }
-//}
-
-//fun getUserSchedule(
-//    scheduleId: Int,
-//    scheduleViewModel: ScheduleViewModel,
-//    userName: String?,
-//    function: (Map<String, List<Int>>) -> Unit
-//) {
-////    scheduleViewModel.GetUserSchedule(scheduleId, userName.toString()) {
-////        function(it)
-////    }
-//}
 
 

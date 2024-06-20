@@ -68,9 +68,10 @@ fun TimeSheet(
             startDate = it.scheduleStartDate
             startDay = getDayofWeek(startDate)
         }
-        initUserTimeInfo(scheduleId, userName.toString(), userTimeViewModel) {
-
-        }
+//        initUserTimeInfoinTimeSheet(scheduleId, userName.toString(), userTimeViewModel) {
+//
+//        }
+        userTimeViewModel.GetAllUserTime(scheduleId)
     }
 
     Column {
@@ -170,6 +171,15 @@ fun initInfo(
     scheduleViewModel.GetSchedule(scheduleId) {
         onInit(it)
     }
+}
+
+fun initUserTimeInfoinTimeSheet(
+    scheduleId: Int,
+    userName: String,
+    userTimeViewModel: UserTimeViewModel,
+    onInit: (UserTime) -> Unit
+) {
+//    userTimeViewModel.GetAllUserTime(scheduleId)
 }
 
 fun initUserTimeInfo(
