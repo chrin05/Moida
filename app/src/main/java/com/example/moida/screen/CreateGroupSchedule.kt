@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -49,6 +50,7 @@ import com.example.moida.ui.theme.Pretendard
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun CreateGroupSchedule(
     navController: NavHostController,
@@ -61,7 +63,7 @@ fun CreateGroupSchedule(
 
     val context = LocalContext.current
     val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
-    val userName = signInViewModel.userName
+    val userName = signInViewModel.userName.value
 
     Column(
         modifier = Modifier
