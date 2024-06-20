@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
+import com.example.moida.component.ScheduleBottomSheet
 import com.example.moida.component.TimePicker
 import com.example.moida.model.schedule.FixedScheduleRepo
 import com.example.moida.model.schedule.FixedScheduleViewModel
@@ -59,7 +60,7 @@ sealed class Routes(val route: String) {
     }
 
     data object ScheduleDetail : Routes("scheduleDetail")
-    data object ScheduleEdit: Routes("scheduleEdit")
+    data object ScheduleEdit : Routes("scheduleEdit")
     data object TimeSheet : Routes("timeSheet")
     data object TimeInput : Routes("timeInput")
     data object SignIn : Routes("signIn")
@@ -84,6 +85,7 @@ sealed class Routes(val route: String) {
     }
 
     data object TimePicker : Routes("timePicker")
+    data object ScheduleBottomSheet : Routes("scheduleBottomSheet")
 }
 
 @Composable
@@ -166,7 +168,7 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(
-            route = Routes.ScheduleDetail.route + "?scheduleId={scheduleId}",
+            route = Routes.ScheduleEdit.route + "?scheduleId={scheduleId}",
             arguments = listOf(
                 navArgument("scheduleId") {
                     type = NavType.IntType
@@ -252,6 +254,19 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Routes.TimePicker.route) {
             TimePicker(navController)
+        }
+
+        composable(
+            route = Routes.ScheduleBottomSheet.route + "?scheduleId={scheduleId}",
+            arguments = listOf(
+                navArgument("scheduleId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            it.arguments?.getInt("scheduleId")?.let { it1 ->
+                ScheduleBottomSheet(navController, fixedScheduleViewModel, scheduleId = it1 )
+            }
         }
     }
 }

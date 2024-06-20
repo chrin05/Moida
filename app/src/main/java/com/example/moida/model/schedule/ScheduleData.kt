@@ -39,11 +39,11 @@ data class ScheduleData(
 }
 
 data class FixedScheduleData( //확정된 약속
-    val scheduleId: Int,
-    val scheduleName: String,
-    val scheduleDate: String,
-    val scheduleTime: String,
-    val category: String
+    var scheduleId: Int,
+    var scheduleName: String,
+    var scheduleDate: String,
+    var scheduleTime: String,
+    var category: String
 ) {
     constructor() : this(-1,"","","","")
 }

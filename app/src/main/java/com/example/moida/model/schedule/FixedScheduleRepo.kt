@@ -17,11 +17,11 @@ class FixedScheduleRepo(private val table: DatabaseReference) { //확정된 약�
 
     fun updateFixedSchedule(fixedScheduleData: FixedScheduleData) {
         table.child(fixedScheduleData.scheduleId.toString())
-            .child(fixedScheduleData.scheduleName).setValue(fixedScheduleData.scheduleName)
+            .child("scheduleName").setValue(fixedScheduleData.scheduleName)
         table.child(fixedScheduleData.scheduleId.toString())
-            .child(fixedScheduleData.scheduleDate).setValue(fixedScheduleData.scheduleDate)
+            .child("scheduleDate").setValue(fixedScheduleData.scheduleDate)
         table.child(fixedScheduleData.scheduleId.toString())
-            .child(fixedScheduleData.scheduleDate).setValue(fixedScheduleData.scheduleDate)
+            .child("scheduleDate").setValue(fixedScheduleData.scheduleDate)
     }
 
     fun deleteFixedSchedule(fixedScheduleData: FixedScheduleData) {

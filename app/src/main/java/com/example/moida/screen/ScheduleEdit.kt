@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import com.example.moida.component.NameTextField
 import com.example.moida.component.TimeField
 import com.example.moida.component.Title
 import com.example.moida.model.BottomNavItem
+import com.example.moida.model.Routes
 import com.example.moida.model.schedule.FixedScheduleData
 import com.example.moida.model.schedule.FixedScheduleViewModel
 import com.example.moida.ui.theme.Pretendard
@@ -42,12 +44,13 @@ fun ScheduleEdit(
     fixedScheduleViewModel: FixedScheduleViewModel,
     scheduleId: Int,
 ) {
-    var name by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
-    var category by remember {
-        mutableStateOf("")
-    }
+    val name by fixedScheduleViewModel.scheduleName.collectAsState()
+    val date by fixedScheduleViewModel.scheduleDate.collectAsState()
+    val time by fixedScheduleViewModel.scheduleTime.collectAsState()
+//    var name by remember { mutableStateOf("") }
+//    var date by remember { mutableStateOf("") }
+//    var time by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -59,9 +62,9 @@ fun ScheduleEdit(
 
         LaunchedEffect(selectedItem) {
             initScheduleInfo(scheduleId, fixedScheduleViewModel) {
-                name = it.scheduleName
-                date = it.scheduleDate
-                time = it.scheduleTime
+                fixedScheduleViewModel.changeFSName(name)
+                fixedScheduleViewModel.changeFSDate(date)
+                fixedScheduleViewModel.changeFSTime(time)
                 category = it.category
             }
         }
@@ -79,7 +82,9 @@ fun ScheduleEdit(
                 modifier = Modifier
                     .size(24.dp)
                     .clickable {
-                        //detail로
+                        navController.navigate("${Routes.ScheduleDetail.route}?scheduleId=$scheduleId"){
+                            popUpTo(BottomNavItem.Home.route) { inclusive = true }
+                        }
                     }
             )
             Text(
@@ -103,7 +108,9 @@ fun ScheduleEdit(
                         category = category
                     )
                     fixedScheduleViewModel.UpdateFixedSchedule(res)
-                    navController.popBackStack()
+                    navController.navigate("${Routes.ScheduleDetail.route}?scheduleId=$scheduleId"){
+                        popUpTo(BottomNavItem.Home.route) { inclusive = true }
+                    }
                 }
             )
         }

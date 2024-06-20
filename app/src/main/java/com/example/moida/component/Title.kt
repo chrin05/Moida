@@ -81,7 +81,8 @@ fun Title(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { //bottomSheet연결
+                    .clickable {
+
                     }
             )
         }
@@ -176,7 +177,7 @@ fun HomeTitle(
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Routes.CreateMySchedule.route)
+                navController.navigate(Routes.ScheduleDetail.route)
             },
             modifier = Modifier
                 .wrapContentSize(),
