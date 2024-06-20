@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,8 +18,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.BottomBtn
@@ -30,17 +33,21 @@ import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
 import com.example.moida.model.schedule.ScheduleData
 import com.example.moida.model.schedule.ScheduleViewModel
+import com.example.moida.model.schedule.UserTime
+import com.example.moida.model.schedule.UserTimeViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun TimeSheet(
     navController: NavHostController,
     scheduleViewModel: ScheduleViewModel,
+    userTimeViewModel: UserTimeViewModel,
     scheduleId: Int
 ) {
-    var scheduleName by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleName)}
+    var scheduleName by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleName) }
     var startDate by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleStartDate) }
     var startDay by remember { mutableStateOf(DayOfWeek.MONDAY) }
     var page by remember { mutableIntStateOf(1) }
@@ -51,11 +58,18 @@ fun TimeSheet(
         mutableStateOf<ScheduleData?>(null)
     }
 
+    val context = LocalContext.current
+    val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
+    val userName = signInViewModel.userName.value
+
     LaunchedEffect(selectedItem) {
         initInfo(scheduleId, scheduleViewModel) {
             scheduleName = it.scheduleName
             startDate = it.scheduleStartDate
             startDay = getDayofWeek(startDate)
+        }
+        initUserTimeInfo(scheduleId, userName.toString(), userTimeViewModel) {
+
         }
     }
 
@@ -133,8 +147,10 @@ fun TimeSheet(
         Spacer(modifier = Modifier.weight(1f))
 
         //버튼 입력
-        Box(modifier = Modifier
-            .padding(horizontal = 24.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+        ) {
             BottomBtn(
                 navController = navController,
                 route = "${Routes.TimeInput.route}?scheduleId=$scheduleId",
@@ -146,8 +162,23 @@ fun TimeSheet(
     }
 }
 
-fun initInfo(scheduleId: Int, scheduleViewModel: ScheduleViewModel, onInit: (ScheduleData) -> Unit) {
+fun initInfo(
+    scheduleId: Int,
+    scheduleViewModel: ScheduleViewModel,
+    onInit: (ScheduleData) -> Unit
+) {
     scheduleViewModel.GetSchedule(scheduleId) {
+        onInit(it)
+    }
+}
+
+fun initUserTimeInfo(
+    scheduleId: Int,
+    userName: String,
+    userTimeViewModel: UserTimeViewModel,
+    onInit: (UserTime) -> Unit
+) {
+    userTimeViewModel.GetUserTime(scheduleId, userName) {
         onInit(it)
     }
 }
