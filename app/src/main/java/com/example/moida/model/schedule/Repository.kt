@@ -34,13 +34,13 @@ class Repository(private val table: DatabaseReference) {
             .child(scheduleData.scheduleTime).setValue(scheduleData.scheduleTime)
     }
 
-    fun updateMemberTime(scheduleData: ScheduleData) {
-        val id = scheduleData.memberTimes?.keys?.first()
-        table.child(scheduleData.scheduleId.toString())
-            .child("memberTimes")
-            .child(id.toString())
-            .setValue(scheduleData.memberTimes)
-    }
+//    fun updateMemberTime(scheduleData: ScheduleData) {
+//        val id = scheduleData.memberTimes?.keys?.first()
+//        table.child(scheduleData.scheduleId.toString())
+//            .child("memberTimes")
+//            .child(id.toString())
+//            .setValue(scheduleData.memberTimes)
+//    }
 
     fun deleteSchedule(scheduleData: ScheduleData) {
         table.child(scheduleData.scheduleId.toString()).removeValue()
@@ -73,38 +73,49 @@ class Repository(private val table: DatabaseReference) {
     fun getSchedule(scheduleId: String, callback: (ScheduleData?) -> Unit) {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val gson = Gson()
-                // 데이터의 두 번째 요소인 Map을 JSON 문자열로 변환
-                val json = gson.toJson(snapshot.value)
-                var data = json
-                var res = ""
-                for (i in 6..<data.length - 1) {
-                    res += data[i]
+                for (itemSnapshot in snapshot.children) {
+                    val item = itemSnapshot.getValue(ScheduleData::class.java)
+                    item?.let {
+                        if (it.scheduleId.toString() == scheduleId) {
+                            Log.i("chrin2", "onDataChange: it $it")
+                            callback(it)
+                        }
+                    }
                 }
-                val mapper = jacksonObjectMapper()
-                val dataMap: Map<String, String> = mapper.readValue(res)
-                Log.i("chrin", "====== : ${dataMap.getValue("memberTimes")}")
-                var scheduleId = dataMap.getValue("scheduleId").toInt()
-                var scheduleStartDate = dataMap.getValue("scheduleStartDate")
-                var scheduleTime = dataMap.getValue("scheduleTime")
-                var scheduleName = dataMap.getValue("scheduleStartDate")
-                var category = dataMap.getValue("category")
-                val memTimeMap: Map<String, String> = mapper.readValue(dataMap.getValue("memberTimes"))
-                Log.i("chrin", "10000====== : timeMap $memTimeMap")
-                val timeMap : Map<String, List<Int>> = mapper.readValue(memTimeMap.getValue("${memTimeMap.keys}"))
-                Log.i("chrin", "11111====== : timeMap $timeMap")
-                var memberTimes = mapOf(
-                    "${memTimeMap.keys}" to mapOf(
-                        "time1" to timeMap.getValue("time1"),
-                        "time2" to List(24) { 0 },
-                        "time3" to List(24) { 0 },
-                        "time4" to List(24) { 0 },
-                        "time5" to List(24) { 0 },
-                        "time6" to List(24) { 0 },
-                        "time7" to List(24) { 0 }
-                    )
-                )
+//                val gson = Gson()
+//                val data = gson.toJson(snapshot.value) //gson->json 변환
+//                var res = ""
+//                for (i in 6..<data.length - 1) {
+//                    res += data[i]
+//                }
+//                Log.i("chrin", "onDataChange: res = $res")
+//                val dataMap: Map<String, String> = jacksonObjectMapper().readValue(res) //json->gson
+//
+//
+//                var scheduleId = dataMap.getValue("scheduleId").toInt()
+//                var scheduleStartDate = dataMap.getValue("scheduleStartDate")
+//                var scheduleTime = dataMap.getValue("scheduleTime")
+//                var scheduleName = dataMap.getValue("scheduleStartDate")
+//                var category = dataMap.getValue("category")
+//                Log.i("chrin", "onDataChange: dataMap $dataMap")
+//                Log.i("chrin", "onDataChange: scheduleid $scheduleId")
 
+//                val memTimeMap: Map<String, String> = mapper.readValue(dataMap.getValue("memberTimes"))
+//                Log.i("chrin", "====== timemap : $memTimeMap")
+//                val timeMap : Map<String, List<Int>> = mapper.readValue(memTimeMap.getValue("${memTimeMap.keys}"))
+//                Log.i("chrin", "====== timemap : $timeMap")
+////                var memberTimes = mapOf(
+//                    "${memTimeMap.keys}" to mapOf(
+//                        "time1" to timeMap.getValue("time1"),
+//                        "time2" to List(24) { 0 },
+//                        "time3" to List(24) { 0 },
+//                        "time4" to List(24) { 0 },
+//                        "time5" to List(24) { 0 },
+//                        "time6" to List(24) { 0 },
+//                        "time7" to List(24) { 0 }
+//                    )
+//                )
+//
 //                if (dataMap != null) {
 //                    if (dataMap.getValue("scheduleId") == scheduleId) {
 ////                        val scheduleData = ScheduleData(
@@ -129,54 +140,53 @@ class Repository(private val table: DatabaseReference) {
                 Log.d("chrin", "[Repository] getSchedule onCancelled(2): DatabaseError")
             }
         }
-
         table.addValueEventListener(listener)
     }
 
-    fun getUserSchedule(
-        scheduleId: String,
-        userName: String,
-        callback: (Map<String, List<Int>>?) -> Unit
-    ) {
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val data = snapshot.value as? Map<String, Any>
-                if (data != null) {
-                    val memberTimes = data["memberTimes"] as? Map<String, Map<String, List<Int>>>
-                    if (data["scheduleId"] == scheduleId) {
-                        if (memberTimes != null) {
-                            for (time in memberTimes) {
-                                if (userName == time.key) {
-                                    Log.i("chrin", "[getUserSchedule] : $time")
-                                    callback(time.value)
-                                    return
-                                }
-                            }
-
-                        }
-                    }
-                } else {
-                    callback(null)
-                }
-//                for (itemSnapshot in snapshot.children) {
-//                    val item = itemSnapshot.getValue(ScheduleData::class.java)
-//                    item?.let {
-//                        if (it.scheduleId.toString() == scheduleId) {
-//                            for (time in it.memberTimes!!)
+//    fun getUserSchedule(
+//        scheduleId: String,
+//        userName: String,
+//        callback: (Map<String, List<Int>>?) -> Unit
+//    ) {
+//        val listener = object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val data = snapshot.value as? Map<String, Any>
+//                if (data != null) {
+//                    val memberTimes = data["memberTimes"] as? Map<String, Map<String, List<Int>>>
+//                    if (data["scheduleId"] == scheduleId) {
+//                        if (memberTimes != null) {
+//                            for (time in memberTimes) {
 //                                if (userName == time.key) {
+//                                    Log.i("chrin", "[getUserSchedule] : $time")
 //                                    callback(time.value)
 //                                    return
 //                                }
+//                            }
+//
 //                        }
 //                    }
+//                } else {
+//                    callback(null)
 //                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("chrin", "[Repository] userSchedule onCancelled(2): DatabaseError")
-            }
-        }
-
-        table.addValueEventListener(listener)
-    }
+////                for (itemSnapshot in snapshot.children) {
+////                    val item = itemSnapshot.getValue(ScheduleData::class.java)
+////                    item?.let {
+////                        if (it.scheduleId.toString() == scheduleId) {
+////                            for (time in it.memberTimes!!)
+////                                if (userName == time.key) {
+////                                    callback(time.value)
+////                                    return
+////                                }
+////                        }
+////                    }
+////                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("chrin", "[Repository] userSchedule onCancelled(2): DatabaseError")
+//            }
+//        }
+//
+//        table.addValueEventListener(listener)
+//    }
 }

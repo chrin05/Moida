@@ -16,6 +16,9 @@ import com.example.moida.model.schedule.MyScheduleViewModel
 import com.example.moida.model.schedule.Repository
 import com.example.moida.model.schedule.ScheduleViewModel
 import com.example.moida.model.schedule.ScheduleViewModelFactory
+import com.example.moida.model.schedule.UserTimeRepo
+import com.example.moida.model.schedule.UserTimeViewModel
+import com.example.moida.model.schedule.UserTimeViewModelFactory
 import com.example.moida.screen.ChangeName
 import com.example.moida.screen.ChangedName
 import com.example.moida.screen.CreateGroupSchedule
@@ -50,6 +53,7 @@ sealed class Routes(val route: String) {
     data object CreateGroupSchedule : Routes("createGroupSchedule/{groupId}") {
         fun createRoute(groupId: String) = "createGroupSchedule/$groupId"
     }
+
     data object ScheduleDetail : Routes("scheduleDetail")
     data object TimeSheet : Routes("timeSheet")
     data object TimeInput : Routes("timeInput")
@@ -73,6 +77,7 @@ sealed class Routes(val route: String) {
             return "groupDetail/$meetingJson"
         }
     }
+
     data object TimePicker : Routes("timePicker")
 }
 
@@ -81,9 +86,11 @@ fun NavGraph(navController: NavHostController) {
     val table = Firebase.database.getReference("pendingSchedule")
     val scheduleViewModel: ScheduleViewModel =
         viewModel(factory = ScheduleViewModelFactory(Repository(table)))
+    val table2 = Firebase.database.getReference("userTime")
+    val userTimeViewModel: UserTimeViewModel =
+        viewModel(factory = UserTimeViewModelFactory(UserTimeRepo(table2)))
 
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
-        //val shareViewModel = ShareViewModel()
 
         composable(BottomNavItem.Home.route) {
             MainHome(navController)
@@ -111,7 +118,7 @@ fun NavGraph(navController: NavHostController) {
             ResignMemberShip(navController)
         }
 
-        composable(Routes.CreateMySchedule.route) {backStackEntry ->
+        composable(Routes.CreateMySchedule.route) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Routes.CreateMySchedule.route)
             }
@@ -128,7 +135,13 @@ fun NavGraph(navController: NavHostController) {
             }
             val groupScheduleViewModel: GroupScheduleViewModel = viewModel(parentEntry)
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
-            CreateGroupSchedule(navController, groupScheduleViewModel, scheduleViewModel, groupId)
+            CreateGroupSchedule(
+                navController,
+                groupScheduleViewModel,
+                scheduleViewModel,
+                userTimeViewModel,
+                groupId
+            )
         }
 
         composable(Routes.ScheduleDetail.route) {
@@ -148,7 +161,8 @@ fun NavGraph(navController: NavHostController) {
         ) { backStackEntry ->
             val meetingJson = backStackEntry.arguments?.getString("meetingJson")
             val gson = Gson()
-            val decodedMeetingJson = URLDecoder.decode(meetingJson, StandardCharsets.UTF_8.toString())
+            val decodedMeetingJson =
+                URLDecoder.decode(meetingJson, StandardCharsets.UTF_8.toString())
             val meeting = gson.fromJson(decodedMeetingJson, Meeting::class.java)
             GroupDetail(navController, meeting)
         }
@@ -165,6 +179,7 @@ fun NavGraph(navController: NavHostController) {
                 TimeSheet(
                     navController,
                     scheduleViewModel,
+                    userTimeViewModel,
                     scheduleId = it1,
                 )
             }
@@ -182,6 +197,7 @@ fun NavGraph(navController: NavHostController) {
                 TimeInput(
                     navController,
                     scheduleViewModel,
+                    userTimeViewModel,
                     scheduleId = it1,
                 )
             }

@@ -1,7 +1,7 @@
 package com.example.moida.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.text.TextUtils.split
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +43,8 @@ import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
 import com.example.moida.model.schedule.ScheduleData
 import com.example.moida.model.schedule.ScheduleViewModel
+import com.example.moida.model.schedule.UserTime
+import com.example.moida.model.schedule.UserTimeViewModel
 import com.example.moida.ui.theme.Pretendard
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -53,6 +55,7 @@ import java.time.format.DateTimeFormatter
 fun TimeInput(
     navController: NavHostController,
     scheduleViewModel: ScheduleViewModel,
+    userTimeViewModel: UserTimeViewModel,
     scheduleId: Int
 ) {
     var startDate by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleStartDate) }
@@ -81,14 +84,16 @@ fun TimeInput(
             startDate = it.scheduleStartDate
             startDay = getDayofWeek(startDate)
         }
-        getUserSchedule(scheduleId, scheduleViewModel, userName) {
-            time1 = it.getValue("time1")
-            time2 = it.getValue("time2")
-            time3 = it.getValue("time3")
-            time4 = it.getValue("time4")
-            time5 = it.getValue("time5")
-            time6 = it.getValue("time6")
-            time7 = it.getValue("time7")
+        if (userName != null) {
+            initUserTimeInfo(scheduleId, userName, userTimeViewModel) { userTime ->
+                time1 = userTime.time1.split(",").map { it.toInt() }
+                time2 = userTime.time2.split(",").map { it.toInt() }
+                time3 = userTime.time3.split(",").map { it.toInt() }
+                time4 = userTime.time4.split(",").map { it.toInt() }
+                time5 = userTime.time5.split(",").map { it.toInt() }
+                time6 = userTime.time6.split(",").map { it.toInt() }
+                time7 = userTime.time7.split(",").map { it.toInt() }
+            }
         }
     }
 
@@ -314,25 +319,18 @@ fun TimeInput(
                 .fillMaxWidth()
                 .padding(bottom = 20.dp, start = 24.dp, end = 24.dp),
             onClick = {
-                var scheduleData = ScheduleData(
-                    scheduleId = scheduleId,
-                    scheduleName = scheduleViewModel.selectedItem.scheduleName,
-                    scheduleStartDate = scheduleViewModel.selectedItem.scheduleStartDate,
-                    scheduleTime = "",
-                    category = scheduleViewModel.selectedItem.category,
-                    memberTimes = mapOf(
-                        "$userName" to mapOf(
-                            "time1" to time1,
-                            "time2" to time2,
-                            "time3" to time3,
-                            "time4" to time4,
-                            "time5" to time5,
-                            "time6" to time6,
-                            "time7" to time7
-                        )
-                    )
+                var userTime = UserTime(
+                    scheduleId = scheduleId.toString(),
+                    userName = userName.toString(),
+                    time1 = time1.joinToString(separator = ","),
+                    time2 = time2.joinToString(separator = ","),
+                    time3 = time3.joinToString(separator = ","),
+                    time4 = time4.joinToString(separator = ","),
+                    time5 = time5.joinToString(separator = ","),
+                    time6 = time6.joinToString(separator = ","),
+                    time7 = time7.joinToString(separator = ",")
                 )
-                scheduleViewModel.UdpateMemberTime(scheduleData)
+                userTimeViewModel.UpdateUserTime(userTime)
                 navController.navigate("${Routes.TimeSheet.route}?scheduleId=$scheduleId")
             },
             colors = ButtonDefaults.buttonColors(
@@ -354,15 +352,14 @@ fun TimeInput(
     }
 }
 
-fun getUserSchedule(
+fun initUserTimeInfo(
     scheduleId: Int,
-    scheduleViewModel: ScheduleViewModel,
-    userName: String?,
-    function: (Map<String, List<Int>>) -> Unit
+    userName: String,
+    userTimeViewModel: UserTimeViewModel,
+    onInit: (UserTime) -> Unit
 ) {
-    scheduleViewModel.GetUserSchedule(scheduleId, userName.toString()) {
-        function(it)
+    userTimeViewModel.GetUserTime(scheduleId, userName) {
+        onInit(it)
     }
 }
-
 
