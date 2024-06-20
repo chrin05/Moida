@@ -67,13 +67,13 @@ fun TimeInput(
     val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
     val userName = signInViewModel.userName.value
 
-    var time1 by remember { mutableStateOf(List(24) {0}) }
-    var time2 by remember { mutableStateOf(List(24) {0}) }
-    var time3 by remember { mutableStateOf(List(24) {0}) }
-    var time4 by remember { mutableStateOf(List(24) {0}) }
-    var time5 by remember { mutableStateOf(List(24) {0}) }
-    var time6 by remember { mutableStateOf(List(24) {0}) }
-    var time7 by remember { mutableStateOf(List(24) {0}) }
+    var time1 by remember { mutableStateOf(List(24) { 0 }) }
+    var time2 by remember { mutableStateOf(List(24) { 0 }) }
+    var time3 by remember { mutableStateOf(List(24) { 0 }) }
+    var time4 by remember { mutableStateOf(List(24) { 0 }) }
+    var time5 by remember { mutableStateOf(List(24) { 0 }) }
+    var time6 by remember { mutableStateOf(List(24) { 0 }) }
+    var time7 by remember { mutableStateOf(List(24) { 0 }) }
 
     var selectedItem by remember {
         mutableStateOf<ScheduleData?>(null)
@@ -85,14 +85,14 @@ fun TimeInput(
             startDay = getDayofWeek(startDate)
         }
         if (userName != null) {
-            initUserTimeInfo(scheduleId, userName, userTimeViewModel) {userTime ->
-                time1 = userTime.time1.split(",").map {it.toInt()}
-                time2 = userTime.time2.split(",").map {it.toInt()}
-                time3 = userTime.time3.split(",").map {it.toInt()}
-                time4 = userTime.time4.split(",").map {it.toInt()}
-                time5 = userTime.time5.split(",").map {it.toInt()}
-                time6 = userTime.time6.split(",").map {it.toInt()}
-                time7 = userTime.time7.split(",").map {it.toInt()}
+            initUserTimeInfo(scheduleId, userName, userTimeViewModel) { userTime ->
+                time1 = userTime.time1.split(",").map { it.toInt() }
+                time2 = userTime.time2.split(",").map { it.toInt() }
+                time3 = userTime.time3.split(",").map { it.toInt() }
+                time4 = userTime.time4.split(",").map { it.toInt() }
+                time5 = userTime.time5.split(",").map { it.toInt() }
+                time6 = userTime.time6.split(",").map { it.toInt() }
+                time7 = userTime.time7.split(",").map { it.toInt() }
             }
         }
     }

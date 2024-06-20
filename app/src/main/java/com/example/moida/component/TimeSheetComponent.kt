@@ -247,6 +247,39 @@ fun TimeBlockGroup( //화면에 대한 타임블록
 }
 
 @Composable
+fun MemTimeBlock( //화면에 대한 타임블록
+    memberCount: Int,
+    timeList: IntArray,
+    onClick: () -> Unit
+) {
+    val box0 = 0
+    val box1 = memberCount / 3
+    val box2 = memberCount / 3 * 2
+
+    Column(
+        modifier = Modifier
+    ) {
+        for (index in 0 until 24) {
+            var backgroundColor = 0
+            if (timeList[index] == box0) backgroundColor = R.color.white
+            else if (timeList[index] <= box1) backgroundColor = R.color.blue3
+            else if (timeList[index] <= box2) backgroundColor = R.color.blue1
+            else if (timeList[index] <= memberCount) backgroundColor = R.color.main_blue
+
+            Box(
+                modifier = Modifier
+                    .size(width = 80.dp, height = 24.dp)
+                    .background(colorResource(id = backgroundColor))
+                    .border(width = 0.3.dp, color = colorResource(id = R.color.disabled))
+                    .clickable {
+                        //확정 dialog 보여주기
+                    }
+            )
+        }
+    }
+}
+
+@Composable
 fun TimeBlockInput(
     isBtnClicked: Boolean,
     timeList: IntArray,

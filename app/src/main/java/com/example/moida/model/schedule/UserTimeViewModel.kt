@@ -78,7 +78,6 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
                 if (it != null) {
                     selectedItem = it
                     callback(it)
-                    Log.i("chrin", "GetUserTime: getUser it $it")
                     return@getUserTime
                 }
             }

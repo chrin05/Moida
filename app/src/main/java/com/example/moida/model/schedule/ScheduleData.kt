@@ -14,7 +14,7 @@ data class UserTime(
     constructor() : this("-1", "", "", "", "", "", "", "", "")
 }
 
-data class UserTime2(
+data class UserTime2( //scheduleid는 이미 같고 시간 계산용
     val userName: String,
     val time1: String,
     val time2: String,

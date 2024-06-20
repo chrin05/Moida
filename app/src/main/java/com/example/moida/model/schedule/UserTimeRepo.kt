@@ -111,7 +111,17 @@ class UserTimeRepo(private val table: DatabaseReference) {
                         for (itemSnapshot2 in itemSnapshot.children) {
                             val item = itemSnapshot2.getValue(UserTime2::class.java)
                             item?.let {
-                                itemList.add(it)
+                                val res = UserTime2(
+                                    userName = it.userName,
+                                    time1 = it.time1,
+                                    time2 = it.time2,
+                                    time3 = it.time3,
+                                    time4 = it.time4,
+                                    time5 = it.time5,
+                                    time6 = it.time6,
+                                    time7 = it.time7,
+                                )
+                                itemList.add(res)
                             }
                         }
                         Log.i("chrin", "[UserTImeRepo]\nonDataChange:\nitemList = $itemList")

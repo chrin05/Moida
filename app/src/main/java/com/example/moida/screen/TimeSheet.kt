@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,14 +27,17 @@ import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.BottomBtn
 import com.example.moida.component.HeadOfTime
+import com.example.moida.component.MemTimeBlock
 import com.example.moida.component.NumberSection
 import com.example.moida.component.ShowTimeLine
 import com.example.moida.component.TimeBlockGroup
+import com.example.moida.component.TimeBlockInput
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
 import com.example.moida.model.schedule.ScheduleData
 import com.example.moida.model.schedule.ScheduleViewModel
 import com.example.moida.model.schedule.UserTime
+import com.example.moida.model.schedule.UserTime2
 import com.example.moida.model.schedule.UserTimeViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -52,11 +56,19 @@ fun TimeSheet(
     var startDay by remember { mutableStateOf(DayOfWeek.MONDAY) }
     var page by remember { mutableIntStateOf(1) }
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val memberCount = 5
+    val memberCount = 5 //
 
     var selectedItem by remember {
         mutableStateOf<ScheduleData?>(null)
     }
+
+    var time1 by remember { mutableStateOf(List(24) { 0 }) }
+    var time2 by remember { mutableStateOf(List(24) { 0 }) }
+    var time3 by remember { mutableStateOf(List(24) { 0 }) }
+    var time4 by remember { mutableStateOf(List(24) { 0 }) }
+    var time5 by remember { mutableStateOf(List(24) { 0 }) }
+    var time6 by remember { mutableStateOf(List(24) { 0 }) }
+    var time7 by remember { mutableStateOf(List(24) { 0 }) }
 
     val context = LocalContext.current
     val signInViewModel: SignInViewModel = viewModel(factory = SignInViewModelFactory(context))
@@ -68,10 +80,19 @@ fun TimeSheet(
             startDate = it.scheduleStartDate
             startDay = getDayofWeek(startDate)
         }
-//        initUserTimeInfoinTimeSheet(scheduleId, userName.toString(), userTimeViewModel) {
-//
-//        }
-        userTimeViewModel.GetAllUserTime(scheduleId)
+        initUserTimeInfoinTimeSheet(
+            scheduleId,
+            userName.toString(),
+            userTimeViewModel
+        ) { userTime ->
+            time1 = userTime.time1.split(",").map { it.toInt() }
+            time2 = userTime.time2.split(",").map { it.toInt() }
+            time3 = userTime.time3.split(",").map { it.toInt() }
+            time4 = userTime.time4.split(",").map { it.toInt() }
+            time5 = userTime.time5.split(",").map { it.toInt() }
+            time6 = userTime.time6.split(",").map { it.toInt() }
+            time7 = userTime.time7.split(",").map { it.toInt() }
+        }
     }
 
     Column {
@@ -141,7 +162,35 @@ fun TimeSheet(
             //시간대
             ShowTimeLine()
             //시간화면보여줌
-            TimeBlockGroup(page = page, memberCount = memberCount, startDate = startDate)
+            Box(
+                modifier = Modifier
+                    .width(250.dp)
+                    .padding(top = 13.dp, start = 10.dp)
+            ) {
+                if (page == 1) {
+                    Row {
+                        MemTimeBlock(memberCount, time1.toIntArray()) {
+                        }
+                        MemTimeBlock(memberCount, time2.toIntArray()) {
+                        }
+                        MemTimeBlock(memberCount, time3.toIntArray()) {
+                        }
+                    }
+                } else if (page == 2) {
+                    Row {
+                        MemTimeBlock(memberCount, time4.toIntArray()) {
+                        }
+                        MemTimeBlock(memberCount, time5.toIntArray()) {
+                        }
+                        MemTimeBlock(memberCount, time6.toIntArray()) {
+                        }
+                    }
+                } else {
+                    MemTimeBlock(memberCount, time7.toIntArray()) {
+                    }
+                }
+            }
+            //TimeBlockGroup(page = page, memberCount = memberCount, startDate = startDate)
             NumberSection(memberCount = memberCount)
         }
 
@@ -179,7 +228,47 @@ fun initUserTimeInfoinTimeSheet(
     userTimeViewModel: UserTimeViewModel,
     onInit: (UserTime) -> Unit
 ) {
-//    userTimeViewModel.GetAllUserTime(scheduleId)
+    var res1 = List(24) { 0 }.toMutableList()
+    var res2 = List(24) { 0 }.toMutableList()
+    var res3 = List(24) { 0 }.toMutableList()
+    var res4 = List(24) { 0 }.toMutableList()
+    var res5 = List(24) { 0 }.toMutableList()
+    var res6 = List(24) { 0 }.toMutableList()
+    var res7 = List(24) { 0 }.toMutableList()
+    val list = userTimeViewModel.GetAllUserTime(scheduleId)
+    for (i in 0..<list.value.size) {
+        val dayList1 = list.value[i].time1.split(",").map { it.toInt() }
+        val dayList2 = list.value[i].time2.split(",").map { it.toInt() }
+        val dayList3 = list.value[i].time3.split(",").map { it.toInt() }
+        val dayList4 = list.value[i].time4.split(",").map { it.toInt() }
+        val dayList5 = list.value[i].time5.split(",").map { it.toInt() }
+        val dayList6 = list.value[i].time6.split(",").map { it.toInt() }
+        val dayList7 = list.value[i].time7.split(",").map { it.toInt() }
+
+        for (j in 0..23) {
+            res1[j] += dayList1[j]
+            res2[j] += dayList2[j]
+            res3[j] += dayList3[j]
+            res4[j] += dayList4[j]
+            res5[j] += dayList5[j]
+            res6[j] += dayList6[j]
+            res7[j] += dayList7[j]
+        }
+    }
+    onInit(
+        UserTime(
+            scheduleId.toString(),
+            userName,
+            res1.joinToString(separator = ","),
+            res2.joinToString(separator = ","),
+            res3.joinToString(separator = ","),
+            res4.joinToString(separator = ","),
+            res5.joinToString(separator = ","),
+            res6.joinToString(separator = ","),
+            res7.joinToString(separator = ",")
+        )
+    )
+
 }
 
 fun initUserTimeInfo(
