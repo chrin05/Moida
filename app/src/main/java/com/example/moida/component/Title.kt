@@ -172,7 +172,7 @@ fun HomeTitle(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.moida_logo),
-            contentDescription = "로고"
+            contentDescription = "로고",
         )
 
         OutlinedButton(
