@@ -74,6 +74,18 @@ fun Title(
             fontSize = 18.sp
         )
 
+        if (rightBtn=="햄버거") {
+            Image(
+                painter = painterResource(id = R.drawable.ic_dots_vertical),
+                contentDescription = "뒤로가기",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { //bottomSheet연결
+                    }
+            )
+        }
+
         if (rightColor != null) {
             Text(
                 text = rightBtn,

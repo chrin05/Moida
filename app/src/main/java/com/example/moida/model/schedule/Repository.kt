@@ -19,32 +19,32 @@ class Repository(private val table: DatabaseReference) {
             .addOnCompleteListener { }
     }
 
-    fun updateScheduleName(scheduleData: ScheduleData) {
-        table.child(scheduleData.scheduleId.toString())
-            .child(scheduleData.scheduleName).setValue(scheduleData.scheduleName)
-    }
-
-    fun updateScheduleDate(scheduleData: ScheduleData) {
-        table.child(scheduleData.scheduleId.toString())
-            .child(scheduleData.scheduleStartDate).setValue(scheduleData.scheduleStartDate)
-    }
-
-    fun updateScheduleTime(scheduleData: ScheduleData) {
-        table.child(scheduleData.scheduleId.toString())
-            .child(scheduleData.scheduleTime).setValue(scheduleData.scheduleTime)
-    }
-
-//    fun updateMemberTime(scheduleData: ScheduleData) {
-//        val id = scheduleData.memberTimes?.keys?.first()
+//    fun updateScheduleName(scheduleData: ScheduleData) {
 //        table.child(scheduleData.scheduleId.toString())
-//            .child("memberTimes")
-//            .child(id.toString())
-//            .setValue(scheduleData.memberTimes)
+//            .child(scheduleData.scheduleName).setValue(scheduleData.scheduleName)
 //    }
-
-    fun deleteSchedule(scheduleData: ScheduleData) {
-        table.child(scheduleData.scheduleId.toString()).removeValue()
-    }
+//
+//    fun updateScheduleDate(scheduleData: ScheduleData) {
+//        table.child(scheduleData.scheduleId.toString())
+//            .child(scheduleData.scheduleStartDate).setValue(scheduleData.scheduleStartDate)
+//    }
+//
+//    fun updateScheduleTime(scheduleData: ScheduleData) {
+//        table.child(scheduleData.scheduleId.toString())
+//            .child(scheduleData.scheduleTime).setValue(scheduleData.scheduleTime)
+//    }
+//
+////    fun updateMemberTime(scheduleData: ScheduleData) {
+////        val id = scheduleData.memberTimes?.keys?.first()
+////        table.child(scheduleData.scheduleId.toString())
+////            .child("memberTimes")
+////            .child(id.toString())
+////            .setValue(scheduleData.memberTimes)
+////    }
+//
+//    fun deleteSchedule(scheduleData: ScheduleData) {
+//        table.child(scheduleData.scheduleId.toString()).removeValue()
+//    }
 
     fun getAllSchedules(): Flow<List<ScheduleData>> = callbackFlow {
         val listener = object : ValueEventListener {

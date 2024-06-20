@@ -37,3 +37,13 @@ data class ScheduleData(
 ) {
     constructor() : this(-1, "", "", "", "") // default 생성자
 }
+
+data class FixedScheduleData( //확정된 약속
+    val scheduleId: Int,
+    val scheduleName: String,
+    val scheduleDate: String,
+    val scheduleTime: String,
+    val category: String
+) {
+    constructor() : this(-1,"","","","")
+}

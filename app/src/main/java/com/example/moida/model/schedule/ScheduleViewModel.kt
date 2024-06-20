@@ -58,29 +58,29 @@ class ScheduleViewModel(private val repository: Repository) : ViewModel() {
         return index
     }
 
-    fun UpdateScheduleName(scheduleData: ScheduleData) {
-        viewModelScope.launch {
-            repository.updateScheduleName(scheduleData)
-        }
-    }
-
-    fun UpdateScheduleDate(scheduleData: ScheduleData) {
-        viewModelScope.launch {
-            repository.updateScheduleDate(scheduleData)
-        }
-    }
-
-    fun UpdateScheduleTime(scheduleData: ScheduleData) { //확정된 시간
-        viewModelScope.launch {
-            repository.updateScheduleTime(scheduleData)
-        }
-    }
-
-    fun DeleteSchedule(scheduleData: ScheduleData) {
-        viewModelScope.launch {
-            repository.deleteSchedule(scheduleData)
-        }
-    }
+//    fun UpdateScheduleName(scheduleData: ScheduleData) {
+//        viewModelScope.launch {
+//            repository.updateScheduleName(scheduleData)
+//        }
+//    }
+//
+//    fun UpdateScheduleDate(scheduleData: ScheduleData) {
+//        viewModelScope.launch {
+//            repository.updateScheduleDate(scheduleData)
+//        }
+//    }
+//
+//    fun UpdateScheduleTime(scheduleData: ScheduleData) { //확정된 시간
+//        viewModelScope.launch {
+//            repository.updateScheduleTime(scheduleData)
+//        }
+//    }
+//
+//    fun DeleteSchedule(scheduleData: ScheduleData) {
+//        viewModelScope.launch {
+//            repository.deleteSchedule(scheduleData)
+//        }
+//    }
 
     fun GetAllSchedules() {
         viewModelScope.launch {
