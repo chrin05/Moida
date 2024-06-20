@@ -235,7 +235,9 @@ fun initUserTimeInfoinTimeSheet(
     var res5 = List(24) { 0 }.toMutableList()
     var res6 = List(24) { 0 }.toMutableList()
     var res7 = List(24) { 0 }.toMutableList()
+
     val list = userTimeViewModel.GetAllUserTime(scheduleId)
+
     for (i in 0..<list.value.size) {
         val dayList1 = list.value[i].time1.split(",").map { it.toInt() }
         val dayList2 = list.value[i].time2.split(",").map { it.toInt() }
@@ -269,17 +271,6 @@ fun initUserTimeInfoinTimeSheet(
         )
     )
 
-}
-
-fun initUserTimeInfo(
-    scheduleId: Int,
-    userName: String,
-    userTimeViewModel: UserTimeViewModel,
-    onInit: (UserTime) -> Unit
-) {
-    userTimeViewModel.GetUserTime(scheduleId, userName) {
-        onInit(it)
-    }
 }
 
 fun getDayofWeek(startDate: String): DayOfWeek {

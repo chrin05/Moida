@@ -91,7 +91,6 @@ fun NavGraph(navController: NavHostController) {
         viewModel(factory = UserTimeViewModelFactory(UserTimeRepo(table2)))
 
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
-        //val shareViewModel = ShareViewModel()
 
         composable(BottomNavItem.Home.route) {
             MainHome(navController)

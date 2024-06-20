@@ -14,7 +14,7 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
     private val _itemList = MutableStateFlow<List<UserTime>>(emptyList())
     //val itemList: StateFlow<List<UserTime>> = _itemList
     private var _itemList2 = MutableStateFlow<List<UserTime2>>(emptyList())
-    val itemList2: StateFlow<List<UserTime2>> = _itemList2
+//    val itemList2: StateFlow<List<UserTime2>> = _itemList2
     var selectedItem = UserTime("-1", "", "", "", "", "", "", "", "")
     private val database = Firebase.firestore
 
@@ -40,7 +40,7 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
     }
 
     fun AddUserTime(scheduleId: Int, userName: String) {
-        var userTime = UserTime(
+        val userTime = UserTime(
             scheduleId = scheduleId.toString(),
             userName = userName,
             time1 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -49,9 +49,8 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
             time4 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
             time5 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
             time6 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
-            time7 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
-
-            )
+            time7 = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
+        )
         viewModelScope.launch {
             repository.addPendingUserTime(userTime)
             GetAllUserTime(scheduleId)
@@ -68,7 +67,7 @@ class UserTimeViewModel(private val repository: UserTimeRepo) : ViewModel() {
         viewModelScope.launch {
             repository.getAllUserTime(scheduleId.toString(), callback = {_itemList2.value = it})
         }
-        Log.i("chrin", "[UserTimeViewModel] GetUserTime itmeList2: ${_itemList2.value}")
+//        Log.i("chrin", "[UserTimeViewModel] GetUserTime itmeList2: ${_itemList2.value}")
         return _itemList2
     }
 

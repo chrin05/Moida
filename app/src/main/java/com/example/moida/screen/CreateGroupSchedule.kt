@@ -113,7 +113,7 @@ fun CreateGroupSchedule(
                     .padding(bottom = 20.dp),
                 onClick = {
                     if (activate) {
-                        val scheduleId = scheduleViewModel.AddSchedule(scheduleName, scheduleDate, groupId, userName.toString())
+                        val scheduleId = scheduleViewModel.AddSchedule(scheduleName, scheduleDate, groupId)
                         userTimeViewModel.AddUserTime(scheduleId, userName.toString())
                         navController.navigate("${Routes.TimeSheet.route}?scheduleId=$scheduleId")
                     } else {

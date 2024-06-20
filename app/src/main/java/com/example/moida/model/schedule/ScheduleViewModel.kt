@@ -42,7 +42,7 @@ class ScheduleViewModel(private val repository: Repository) : ViewModel() {
         index = itemList.value.size
     }
 
-    fun AddSchedule(name: String, date: String, groupId: String, userName: String): Int {
+    fun AddSchedule(name: String, date: String, groupId: String): Int {
         index = Random().nextInt(9000) + 1000
         var scheduleData = ScheduleData(
             scheduleId = index,
@@ -61,35 +61,24 @@ class ScheduleViewModel(private val repository: Repository) : ViewModel() {
     fun UpdateScheduleName(scheduleData: ScheduleData) {
         viewModelScope.launch {
             repository.updateScheduleName(scheduleData)
-            //GetAllSchedules()
         }
     }
 
     fun UpdateScheduleDate(scheduleData: ScheduleData) {
         viewModelScope.launch {
             repository.updateScheduleDate(scheduleData)
-            //GetAllSchedules()
         }
     }
 
-    fun UpdateScheduleTime(scheduleData: ScheduleData) {
+    fun UpdateScheduleTime(scheduleData: ScheduleData) { //확정된 시간
         viewModelScope.launch {
             repository.updateScheduleTime(scheduleData)
-            //GetAllSchedules()
         }
     }
-
-//    fun UdpateMemberTime(scheduleData: ScheduleData) {
-//        viewModelScope.launch {
-//            repository.updateMemberTime(scheduleData)
-//            //GetAllSchedules()
-//        }
-//    }
 
     fun DeleteSchedule(scheduleData: ScheduleData) {
         viewModelScope.launch {
             repository.deleteSchedule(scheduleData)
-            //GetAllSchedules()
         }
     }
 
@@ -98,7 +87,6 @@ class ScheduleViewModel(private val repository: Repository) : ViewModel() {
             repository.getAllSchedules().collect {
                 _itemList.value = it
             }
-            //GetAllSchedules()
         }
     }
 
@@ -112,16 +100,6 @@ class ScheduleViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-
-//    fun GetUserSchedule(scheduleId: Int, userName: String, callback: (Map<String, List<Int>>) -> Unit) {
-//        viewModelScope.launch {
-//            repository.getUserSchedule(scheduleId.toString(), userName) {
-//                if (it != null) {
-//                    callback(it)
-//                }
-//            }
-//        }
-//    }
 }
 
 class ScheduleViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {

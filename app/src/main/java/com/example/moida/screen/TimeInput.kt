@@ -352,4 +352,14 @@ fun TimeInput(
     }
 }
 
+fun initUserTimeInfo(
+    scheduleId: Int,
+    userName: String,
+    userTimeViewModel: UserTimeViewModel,
+    onInit: (UserTime) -> Unit
+) {
+    userTimeViewModel.GetUserTime(scheduleId, userName) {
+        onInit(it)
+    }
+}
 
