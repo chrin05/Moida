@@ -30,14 +30,12 @@ import com.example.moida.component.HeadOfTime
 import com.example.moida.component.MemTimeBlock
 import com.example.moida.component.NumberSection
 import com.example.moida.component.ShowTimeLine
-import com.example.moida.component.TimeBlockGroup
-import com.example.moida.component.TimeBlockInput
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
+import com.example.moida.model.schedule.FixedScheduleViewModel
 import com.example.moida.model.schedule.ScheduleData
 import com.example.moida.model.schedule.ScheduleViewModel
 import com.example.moida.model.schedule.UserTime
-import com.example.moida.model.schedule.UserTime2
 import com.example.moida.model.schedule.UserTimeViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -49,6 +47,7 @@ fun TimeSheet(
     navController: NavHostController,
     scheduleViewModel: ScheduleViewModel,
     userTimeViewModel: UserTimeViewModel,
+    fixedScheduleViewModel: FixedScheduleViewModel,
     scheduleId: Int
 ) {
     var scheduleName by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleName) }

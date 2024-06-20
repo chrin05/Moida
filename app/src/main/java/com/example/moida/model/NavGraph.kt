@@ -10,7 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.moida.R
 import com.example.moida.component.CalendarBottomSheet
+import com.example.moida.component.ScheduleBottomSheet
 import com.example.moida.component.TimePicker
+import com.example.moida.model.schedule.FixedScheduleRepo
+import com.example.moida.model.schedule.FixedScheduleViewModel
+import com.example.moida.model.schedule.FixedScheduleViewModelFactory
 import com.example.moida.model.schedule.GroupScheduleViewModel
 import com.example.moida.model.schedule.MyScheduleViewModel
 import com.example.moida.model.schedule.Repository
@@ -33,6 +37,7 @@ import com.example.moida.screen.MyInfor
 import com.example.moida.screen.MyPage
 import com.example.moida.screen.ResignMemberShip
 import com.example.moida.screen.ScheduleDetail
+import com.example.moida.screen.ScheduleEdit
 import com.example.moida.screen.SignIn
 import com.example.moida.screen.TimeInput
 import com.example.moida.screen.TimeSheet
@@ -55,6 +60,7 @@ sealed class Routes(val route: String) {
     }
 
     data object ScheduleDetail : Routes("scheduleDetail")
+    data object ScheduleEdit : Routes("scheduleEdit")
     data object TimeSheet : Routes("timeSheet")
     data object TimeInput : Routes("timeInput")
     data object SignIn : Routes("signIn")
@@ -79,6 +85,7 @@ sealed class Routes(val route: String) {
     }
 
     data object TimePicker : Routes("timePicker")
+    data object ScheduleBottomSheet : Routes("scheduleBottomSheet")
 }
 
 @Composable
@@ -89,6 +96,9 @@ fun NavGraph(navController: NavHostController) {
     val table2 = Firebase.database.getReference("userTime")
     val userTimeViewModel: UserTimeViewModel =
         viewModel(factory = UserTimeViewModelFactory(UserTimeRepo(table2)))
+    val fixedScheduleTable = Firebase.database.getReference("fixedSchedule")
+    val fixedScheduleViewModel: FixedScheduleViewModel =
+        viewModel(factory = FixedScheduleViewModelFactory(FixedScheduleRepo(fixedScheduleTable)))
 
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
 
@@ -123,7 +133,7 @@ fun NavGraph(navController: NavHostController) {
                 navController.getBackStackEntry(Routes.CreateMySchedule.route)
             }
             val myScheduleViewModel: MyScheduleViewModel = viewModel(parentEntry)
-            CreateMySchedule(navController, myScheduleViewModel)
+            CreateMySchedule(navController, myScheduleViewModel, fixedScheduleViewModel)
         }
 
         composable(
@@ -144,8 +154,30 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
-        composable(Routes.ScheduleDetail.route) {
-            ScheduleDetail(navController)
+        composable(
+            route = Routes.ScheduleDetail.route + "?scheduleId={scheduleId}",
+            arguments = listOf(
+                navArgument("scheduleId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            it.arguments?.getInt("scheduleId")?.let { it1 ->
+                ScheduleDetail(navController, fixedScheduleViewModel, scheduleId = it1)
+            }
+        }
+
+        composable(
+            route = Routes.ScheduleEdit.route + "?scheduleId={scheduleId}",
+            arguments = listOf(
+                navArgument("scheduleId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            it.arguments?.getInt("scheduleId")?.let { it1 ->
+                ScheduleEdit(navController, fixedScheduleViewModel, scheduleId = it1)
+            }
         }
 
         composable(Routes.CreateMeeting.route) {
@@ -180,6 +212,7 @@ fun NavGraph(navController: NavHostController) {
                     navController,
                     scheduleViewModel,
                     userTimeViewModel,
+                    fixedScheduleViewModel,
                     scheduleId = it1,
                 )
             }
@@ -221,6 +254,19 @@ fun NavGraph(navController: NavHostController) {
 
         composable(Routes.TimePicker.route) {
             TimePicker(navController)
+        }
+
+        composable(
+            route = Routes.ScheduleBottomSheet.route + "?scheduleId={scheduleId}",
+            arguments = listOf(
+                navArgument("scheduleId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            it.arguments?.getInt("scheduleId")?.let { it1 ->
+                ScheduleBottomSheet(navController, fixedScheduleViewModel, scheduleId = it1 )
+            }
         }
     }
 }

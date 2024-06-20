@@ -74,6 +74,19 @@ fun Title(
             fontSize = 18.sp
         )
 
+        if (rightBtn=="햄버거") {
+            Image(
+                painter = painterResource(id = R.drawable.ic_dots_vertical),
+                contentDescription = "뒤로가기",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+
+                    }
+            )
+        }
+
         if (rightColor != null) {
             Text(
                 text = rightBtn,
@@ -159,12 +172,12 @@ fun HomeTitle(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.moida_logo),
-            contentDescription = "로고"
+            contentDescription = "로고",
         )
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Routes.CreateMySchedule.route)
+                navController.navigate(Routes.ScheduleDetail.route)
             },
             modifier = Modifier
                 .wrapContentSize(),

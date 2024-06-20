@@ -37,3 +37,13 @@ data class ScheduleData(
 ) {
     constructor() : this(-1, "", "", "", "") // default 생성자
 }
+
+data class FixedScheduleData( //확정된 약속
+    var scheduleId: Int,
+    var scheduleName: String,
+    var scheduleDate: String,
+    var scheduleTime: String,
+    var category: String
+) {
+    constructor() : this(-1,"","","","")
+}
