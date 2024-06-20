@@ -1,5 +1,3 @@
-package com.example.moida.screen
-
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +27,7 @@ import com.example.moida.component.TodayItemList
 import com.example.moida.model.GroupDetailViewModel
 import com.example.moida.model.GroupDetailViewModelFactory
 import com.example.moida.model.Meeting
+import com.example.moida.screen.MeetingManager
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -58,7 +57,25 @@ fun GroupDetail(
         drawerState = drawerState,
         gesturesEnabled = true, // 사이드바 슬라이드로 열고 닫기 가능
         drawerContent = {
-            groupInfo?.let { DrawerContent(group = it, drawerState, scope)}
+            groupInfo?.let {
+                DrawerContent(
+                    group = it,
+                    drawerState = drawerState,
+                    scope = scope,
+                    onDeleteMeeting = { meetingId ->
+                        Log.d("GroupDetail", "onDeleteMeeting called with meetingId: $meetingId")
+                        val meetingManager = MeetingManager()
+                        meetingManager.deleteMeeting(meetingId)
+                        navController.popBackStack()
+                    },
+                    onLeaveMeeting = { meetingId ->
+                        Log.d("GroupDetail", "onLeaveMeeting called with meetingId: $meetingId")
+                        val meetingManager = MeetingManager()
+                        meetingManager.leaveMeeting(meetingId)
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     ) {
         LazyColumn(
@@ -72,24 +89,24 @@ fun GroupDetail(
                         onMenuClick = {
                             scope.launch { drawerState.open() }
                         }
-                    , navController = navController)
+                        , navController = navController)
                 }
             }
-            item{
+            item {
                 MainCalendar(
                     events = todayEvents,
-                    onDateClick = {date ->
+                    onDateClick = { date ->
                         selectedEvents = todayEvents[date].orEmpty()
                     },
-                    updateTitle = {it ->
+                    updateTitle = { it ->
                         title = it
                     },
-                    hasEvents = {date, events ->
+                    hasEvents = { date, events ->
                         events[date]?.isNotEmpty() == true
                     }
                 )
             }
-            item{
+            item {
                 TodayItemList(selectedEvents.size, title)
             }
             // 오늘의 일정 리스트
@@ -107,5 +124,4 @@ fun GroupDetail(
             }
         }
     }
-
 }
