@@ -1,5 +1,6 @@
 package com.example.moida.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -82,7 +83,7 @@ fun ScheduleEdit(
                 modifier = Modifier
                     .size(24.dp)
                     .clickable {
-                        navController.navigate("${Routes.ScheduleDetail.route}?scheduleId=$scheduleId"){
+                        navController.navigate("${Routes.ScheduleDetail.route}?scheduleId=$scheduleId") {
                             popUpTo(BottomNavItem.Home.route) { inclusive = true }
                         }
                     }
@@ -107,6 +108,7 @@ fun ScheduleEdit(
                         scheduleTime = time,
                         category = category
                     )
+                    Log.i("chrin4", "ScheduleEdit: res= $res")
                     fixedScheduleViewModel.UpdateFixedSchedule(res)
                     navController.navigate("${Routes.ScheduleDetail.route}?scheduleId=$scheduleId"){
                         popUpTo(BottomNavItem.Home.route) { inclusive = true }

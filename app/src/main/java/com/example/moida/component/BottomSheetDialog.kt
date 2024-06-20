@@ -1,5 +1,6 @@
 package com.example.moida.component
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -155,13 +156,14 @@ fun ScheduleBottomSheet(
                         .padding(vertical = 13.dp)
                         .clickable {
                             val res = FixedScheduleData()
-                            fixedScheduleViewModel.GetFixedSchedule(scheduleId){
+                            fixedScheduleViewModel.GetFixedSchedule(scheduleId) {
                                 res.scheduleId = scheduleId
                                 res.scheduleName = it.scheduleName
                                 res.scheduleDate = it.scheduleDate
                                 res.scheduleTime = it.scheduleTime
                                 res.category = it.category
                             }
+                            Log.i("chrin4", "ScheduleBottomSheet: res = $res")
                             fixedScheduleViewModel.DeleteFixedSchedule(res)
                             navController.navigate(BottomNavItem.Home.route)
                         }
