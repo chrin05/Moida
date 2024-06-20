@@ -67,10 +67,11 @@ fun ChangeName(navController: NavHostController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
-            Modifier.background(Color.White)
+            Modifier
+                .background(Color.White)
                 .padding(start = 24.dp, end = 16.dp)
         ) {
-            NameTextField(title = "이름", onValueChange = { name = it }, "이름 입력")
+            NameTextField(title = "이름", name, onValueChange = { name = it }, "이름 입력")
         }
 
         Spacer(modifier = Modifier.weight(1f))

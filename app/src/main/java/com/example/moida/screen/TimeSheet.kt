@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,18 +19,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.moida.R
 import com.example.moida.component.BottomBtn
 import com.example.moida.component.HeadOfTime
 import com.example.moida.component.NumberSection
 import com.example.moida.component.ShowTimeLine
-import com.example.moida.component.TimeBlock
 import com.example.moida.component.TimeBlockGroup
 import com.example.moida.component.TitleWithXBtn
 import com.example.moida.model.Routes
-import com.example.moida.model.schedule.NewScheduleViewModel
+import com.example.moida.model.schedule.ScheduleData
+import com.example.moida.model.schedule.ScheduleViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -37,22 +37,34 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TimeSheet(
     navController: NavHostController,
-    newScheduleViewModel: NewScheduleViewModel = viewModel(),
+    scheduleViewModel: ScheduleViewModel,
     scheduleId: Int
 ) {
+    var scheduleName by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleName)}
+    var startDate by remember { mutableStateOf(scheduleViewModel.selectedItem.scheduleStartDate) }
+    var startDay by remember { mutableStateOf(DayOfWeek.MONDAY) }
     var page by remember { mutableIntStateOf(1) }
-    var startDate by remember { mutableStateOf("2024.04.04") }
-    var startDay by remember { mutableStateOf(getDayofWeek(startDate)) }
-    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
-    val timeList = intArrayOf(0,0,1,1,2,2,3,3,4,4,5,5,0,0,1,1,2,2,3,3,4,4,5,5)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val memberCount = 5
+
+    var selectedItem by remember {
+        mutableStateOf<ScheduleData?>(null)
+    }
+
+    LaunchedEffect(selectedItem) {
+        initInfo(scheduleId, scheduleViewModel) {
+            scheduleName = it.scheduleName
+            startDate = it.scheduleStartDate
+            startDay = getDayofWeek(startDate)
+        }
+    }
 
     Column {
         //제목부분
         TitleWithXBtn(
             navController = navController,
             route = Routes.CreateGroupSchedule.route,
-            title = newScheduleViewModel.findNameById(scheduleId),
+            title = scheduleName,
             rightBtn = false
         )
         //날짜부분
@@ -72,7 +84,10 @@ fun TimeSheet(
                         .padding(end = 4.dp)
                         .clickable {
                             page -= 1
-                            val date = LocalDate.parse(startDate, formatter)
+                            val date = LocalDate.parse(
+                                startDate,
+                                formatter
+                            )
                             val newDate = date.minusDays(3)
                             startDate = newDate.format(formatter)
                             startDay = getDayofWeek(startDate)
@@ -91,7 +106,10 @@ fun TimeSheet(
                         .padding(start = 4.dp)
                         .clickable {
                             page += 1
-                            val date = LocalDate.parse(startDate, formatter)
+                            val date = LocalDate.parse(
+                                startDate,
+                                formatter
+                            )
                             val newDate = date.plusDays(3)
                             startDate = newDate.format(formatter)
                             startDay = getDayofWeek(startDate)
@@ -109,8 +127,7 @@ fun TimeSheet(
             ShowTimeLine()
             //시간화면보여줌
             TimeBlockGroup(page = page, memberCount = memberCount, startDate = startDate)
-            //우측 인원수 박스 : 모임인원수 넘겨줌 => 변경 필요
-            NumberSection(memberCount = 2)
+            NumberSection(memberCount = memberCount)
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -120,7 +137,7 @@ fun TimeSheet(
             .padding(horizontal = 24.dp)) {
             BottomBtn(
                 navController = navController,
-                route = Routes.TimeInput.route,
+                route = "${Routes.TimeInput.route}?scheduleId=$scheduleId",
                 value = "",
                 btnName = "내 시간 입력하기",
                 activate = true
@@ -129,12 +146,17 @@ fun TimeSheet(
     }
 }
 
+fun initInfo(scheduleId: Int, scheduleViewModel: ScheduleViewModel, onInit: (ScheduleData) -> Unit) {
+    scheduleViewModel.GetSchedule(scheduleId) {
+        onInit(it)
+    }
+}
+
 fun getDayofWeek(startDate: String): DayOfWeek {
     // 날짜 문자열을 파싱하기 위한 포맷터 정의
-    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    val originalFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     // LocalDate 객체로 변환
-    val date = LocalDate.parse(startDate, formatter)
-
+    val date = LocalDate.parse(startDate, originalFormatter)
     return date.dayOfWeek
 }
 

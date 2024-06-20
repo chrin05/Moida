@@ -13,6 +13,9 @@ import com.example.moida.component.CalendarBottomSheet
 import com.example.moida.component.TimePicker
 import com.example.moida.model.schedule.GroupScheduleViewModel
 import com.example.moida.model.schedule.MyScheduleViewModel
+import com.example.moida.model.schedule.Repository
+import com.example.moida.model.schedule.ScheduleViewModel
+import com.example.moida.model.schedule.ScheduleViewModelFactory
 import com.example.moida.screen.ChangeName
 import com.example.moida.screen.ChangedName
 import com.example.moida.screen.CreateGroupSchedule
@@ -30,6 +33,8 @@ import com.example.moida.screen.ScheduleDetail
 import com.example.moida.screen.SignIn
 import com.example.moida.screen.TimeInput
 import com.example.moida.screen.TimeSheet
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.google.gson.Gson
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -73,6 +78,10 @@ sealed class Routes(val route: String) {
 
 @Composable
 fun NavGraph(navController: NavHostController) {
+    val table = Firebase.database.getReference("pendingSchedule")
+    val scheduleViewModel: ScheduleViewModel =
+        viewModel(factory = ScheduleViewModelFactory(Repository(table)))
+
     NavHost(navController = navController, startDestination = Routes.LaunchPage.route) {
         //val shareViewModel = ShareViewModel()
 
@@ -119,7 +128,7 @@ fun NavGraph(navController: NavHostController) {
             }
             val groupScheduleViewModel: GroupScheduleViewModel = viewModel(parentEntry)
             val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
-            CreateGroupSchedule(navController, groupScheduleViewModel, groupId)
+            CreateGroupSchedule(navController, groupScheduleViewModel, scheduleViewModel, groupId)
         }
 
         composable(Routes.ScheduleDetail.route) {
@@ -155,14 +164,27 @@ fun NavGraph(navController: NavHostController) {
             it.arguments?.getInt("scheduleId")?.let { it1 ->
                 TimeSheet(
                     navController,
+                    scheduleViewModel,
                     scheduleId = it1,
                 )
             }
         }
 
         composable(
-            route = Routes.TimeInput.route) {
-            TimeInput(navController)
+            route = Routes.TimeInput.route + "?scheduleId={scheduleId}",
+            arguments = listOf(
+                navArgument("scheduleId") {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            it.arguments?.getInt("scheduleId")?.let { it1 ->
+                TimeInput(
+                    navController,
+                    scheduleViewModel,
+                    scheduleId = it1,
+                )
+            }
         }
 
         composable(Routes.LaunchPage.route) {
